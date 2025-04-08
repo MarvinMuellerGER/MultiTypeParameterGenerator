@@ -1,0 +1,5 @@
+using MultiTypeParameterGenerator.Generation.Models.Entities;
+
+namespace MultiTypeParameterGenerator.Generation.Models.Collections;
+
+internal sealed record MethodSourceCodesOfTypeCollection(params IReadOnlyList<MethodSourceCodesOfType> Values);

@@ -1,0 +1,98 @@
+using MultiTypeParameterGenerator.Analysis.Factories.Collections;
+using MultiTypeParameterGenerator.Analysis.Models.Collections;
+using MultiTypeParameterGenerator.Common.Models.Entities;
+using MultiTypeParameterGenerator.Generation.Factories.Entities;
+using MultiTypeParameterGenerator.Generation.Models.Entities;
+using NSubstitute;
+
+namespace MultiTypeParameterGenerator.Tests.UnitTests.Generation.Factories.Entities;
+
+public class MethodSourceCodeFactoryTest
+{
+    public class Create
+    {
+        [Fact]
+        public void Should_GenerateMethodSourceCodeFromMethodToOverload()
+        {
+            // Arrange
+            var methodToOverload = new MethodToOverload(
+                false,
+                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
+                new(new("internal"), new("static")),
+                new(new("void")),
+                new("SomeMethod"),
+                new(new(new("T1")), new(new("T2"))),
+                new(
+                    new(new(new("T1")), new(
+                        new(new("bool"), false, false),
+                        new(new("SomeRecord"), true, true))),
+                    new(new(new("T2")), new(
+                        new(new("int"), true, false),
+                        new(new("SomeRecord"), false, true)))),
+                new(
+                    new(new("int"), new("firstParam")),
+                    new(new("T1"), new("secondParam")),
+                    new(new("T2"), new("thirdParam"))));
+
+            var acceptedTypeCombinationCollection =
+                new AcceptedTypeCombinationCollection(
+                    new(new(new(new("T1")), false, new(new("bool"), false, false, 1)),
+                        new(new(new("T2")), false, new(new("int"), true, false, 1))),
+                    new(new(new(new("T1")), false, new(new("bool"), false, false, 1)),
+                        new(new(new("T2")), false, new(new("SomeRecord"), false, true, 1, 1))),
+                    new(new(new(new("T1")), false, new(new("SomeRecord"), true, true, 1, 1)),
+                        new(new(new("T2")), false, new(new("int"), true, false, 1))),
+                    new(new(new(new("T1")), false, new(new("SomeRecord"), true, true, 1, 1)),
+                        new(new(new("T2")), false, new(new("SomeRecord"), false, true, 1, 2))));
+
+            var acceptedTypeCombinationCollectionFactory = Substitute.For<IAcceptedTypeCombinationCollectionFactory>();
+            acceptedTypeCombinationCollectionFactory.Create(methodToOverload)
+                .Returns(acceptedTypeCombinationCollection);
+
+            var parameterCollectionFactory = Substitute.For<IParameterCollectionFactory>();
+            parameterCollectionFactory.Create(methodToOverload, Arg.Any<AcceptedTypeCombination>())
+                .Returns(args => new(
+                    new(new("int"), new("firstParam")),
+                    new(new("T1"), new("secondParam"))
+                    {
+                        TypeNameForSourceCode =
+                            args.Arg<AcceptedTypeCombination>().Values[0].AcceptedType.TypeNameForSourceCode
+                    },
+                    new(new("T2"), new("thirdParam"))
+                    {
+                        TypeNameForSourceCode =
+                            args.Arg<AcceptedTypeCombination>().Values[1].AcceptedType.TypeNameForSourceCode
+                    }));
+
+            var expectedMethodSourceCode = new MethodSourceCode(
+                false,
+                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
+                true,
+                new("""
+                       internal static void SomeMethod(int firstParam, bool secondParam, int? thirdParam) =>
+                          SomeMethod<bool, int?>(firstParam, secondParam, thirdParam);
+
+                       internal static void SomeMethod<TSomeRecord>(int firstParam, bool secondParam, TSomeRecord thirdParam)
+                          where TSomeRecord : SomeRecord =>
+                          SomeMethod<bool, TSomeRecord>(firstParam, secondParam, thirdParam);
+
+                       internal static void SomeMethod<TSomeRecord>(int firstParam, TSomeRecord secondParam, int? thirdParam)
+                          where TSomeRecord : SomeRecord? =>
+                          SomeMethod<TSomeRecord, int?>(firstParam, secondParam, thirdParam);
+
+                       internal static void SomeMethod_WithSomeRecord_AndSomeRecord<TSomeRecord, TSomeRecord_2>(int firstParam, TSomeRecord secondParam, TSomeRecord_2 thirdParam)
+                          where TSomeRecord : SomeRecord?
+                          where TSomeRecord_2 : SomeRecord =>
+                          SomeMethod<TSomeRecord, TSomeRecord_2>(firstParam, secondParam, thirdParam);
+                    """));
+
+            // Act
+            var methodSourceCode =
+                new MethodSourceCodeFactory(acceptedTypeCombinationCollectionFactory, parameterCollectionFactory)
+                    .Create(methodToOverload);
+
+            // Assert
+            methodSourceCode.Should().Be(expectedMethodSourceCode);
+        }
+    }
+}
