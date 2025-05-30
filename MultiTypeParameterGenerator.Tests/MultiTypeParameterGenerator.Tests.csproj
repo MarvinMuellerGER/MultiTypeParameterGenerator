@@ -45,7 +45,7 @@
         <ProjectReference Include="..\MultiTypeParameterGenerator\MultiTypeParameterGenerator.csproj"
                           OutputItemType="Analyzer"
                           ReferenceOutputAssembly="true"/>
-        
+
         <ProjectReference Include="..\MultiTypeParameterGenerator.Attributes\MultiTypeParameterGenerator.Attributes.csproj"
                           OutputItemType="Analyzer"
                           ReferenceOutputAssembly="true"/>

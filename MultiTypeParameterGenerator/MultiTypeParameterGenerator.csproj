@@ -33,16 +33,16 @@
               PackagePath="analyzers/dotnet/cs" Visible="false"/>
 
         <!-- Pack the attributes dll in the analyzers/dotnet/cs path -->
-        <None Include="$(OutputPath)\$(AssemblyName).Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(OutputPath)\$(AssemblyName).Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
 
         <!-- Pack the attributes dll in the lib\netstandard2.0 path -->
-        <None Include="$(OutputPath)\$(AssemblyName).Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
-        
+        <None Include="$(OutputPath)\$(AssemblyName).Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="false"/>
+
         <None Include="$(PkgPure_DI)\lib\netstandard2.0\*.dll"
               Pack="true"
               PackagePath="analyzers/dotnet/cs"
               Visible="false"/>
-        
+
         <None Include="..\README.md" Pack="true" PackagePath="" Visible="false"/>
     </ItemGroup>
 
@@ -52,6 +52,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\$(AssemblyName).Attributes\$(AssemblyName).Attributes.csproj" PrivateAssets="All" />
+        <ProjectReference Include="..\$(AssemblyName).Attributes\$(AssemblyName).Attributes.csproj" PrivateAssets="All"/>
     </ItemGroup>
 </Project>

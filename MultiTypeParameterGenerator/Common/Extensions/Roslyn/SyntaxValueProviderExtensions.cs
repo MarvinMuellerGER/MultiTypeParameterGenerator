@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using MultiTypeParameterGenerator.Common.Extensions.Collections;
-using MultiTypeParameterGenerator.Common.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Common.Extensions.Roslyn;
 
