@@ -3,16 +3,20 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>Latest</LangVersion>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
         <Title>MultiTypeParameterGenerator</Title>
         <Authors>Marvin Müller</Authors>
         <Description>MultiTypeParameterGenerator is a C# source generator that automatically creates method variants with multiple types for a single parameter. This tool reduces boilerplate code by generating overloads for methods that need to work with different types. It's ideal for developers who want to provide a type-safe API with broad type support without manually writing numerous similar method implementations.</Description>
         <Copyright>© Marvin Müller, 2025</Copyright>
+        <PackageTags>generator, sourcegenerator, library</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/MarvinMuellerGER/MultiTypeParameterGenerator</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/MarvinMuellerGER/MultiTypeParameterGenerator?tab=Apache-2.0-1-ov-file</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/MarvinMuellerGER/MultiTypeParameterGenerator</RepositoryUrl>
     </PropertyGroup>
 
@@ -23,16 +27,16 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-
-        <None Include="$(PkgPure_DI)\lib\netstandard2.0\*.dll"
-              Pack="true"
-              PackagePath="analyzers/dotnet/cs"
-              Visible="false"/>
     </ItemGroup>
 
     <ItemGroup>
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true"
               PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Include="$(PkgPure_DI)\lib\netstandard2.0\*.dll"
+              Pack="true"
+              PackagePath="analyzers/dotnet/cs"
+              Visible="false"/>
+        <None Include="..\README.md" Pack="true" PackagePath=""/>
     </ItemGroup>
 
     <ItemGroup>
