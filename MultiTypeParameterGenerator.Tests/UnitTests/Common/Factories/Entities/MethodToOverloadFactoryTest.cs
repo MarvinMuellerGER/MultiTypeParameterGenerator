@@ -1,8 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using MultiTypeParameterGenerator.Common.Attributes;
 using MultiTypeParameterGenerator.Common.Factories.Entities;
-using MultiTypeParameterGenerator.Common.Models.Entities;
 using NSubstitute;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Factories.Entities;
@@ -37,7 +35,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "SomeMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -73,7 +71,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "StaticMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -107,7 +105,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "InterfaceMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -140,7 +138,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "StructMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -173,7 +171,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "RecordMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -206,7 +204,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "RecordStructMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -222,7 +220,7 @@ public class MethodToOverloadFactoryTest
             methodSymbol.ContainingType.Returns((INamedTypeSymbol)null!);
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().BeNull();
@@ -258,7 +256,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "ConstrainedMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -301,7 +299,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "ExtensionCandidateMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -334,7 +332,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "PrivateMethod");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().BeNull();
@@ -365,7 +363,7 @@ public class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "MethodInGenericClass");
 
             // Act
-            var result = new MethodToOverloadFactory(Substitute.For<IAttributesDefinition>()).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -422,12 +420,8 @@ public class MethodToOverloadFactoryTest
             var methodSymbol = classSymbol.GetMembers().OfType<IMethodSymbol>()
                 .Single(m => m.Name == "SomeMethod");
 
-            var attributesDefinition = Substitute.For<IAttributesDefinition>();
-            attributesDefinition.AccessModifiersAttributeDefinition.Returns(new AttributeDefinition(
-                new(new("MultiTypeParameterGenerator"), new("AccessModifiersAttribute")), new()));
-
             // Act
-            var result = new MethodToOverloadFactory(attributesDefinition).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -487,12 +481,8 @@ public class MethodToOverloadFactoryTest
             var methodSymbol = classSymbol.GetMembers().OfType<IMethodSymbol>()
                 .Single(m => m.Name == "MethodWithAttributes");
 
-            var attributesDefinition = Substitute.For<IAttributesDefinition>();
-            attributesDefinition.AcceptedTypesAttributeDefinition.Returns(new AttributeDefinition(
-                new(new("MultiTypeParameterGenerator"), new("AcceptedTypesAttribute")), new()));
-
             // Act
-            var result = new MethodToOverloadFactory(attributesDefinition).Create(methodSymbol);
+            var result = new MethodToOverloadFactory().Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();

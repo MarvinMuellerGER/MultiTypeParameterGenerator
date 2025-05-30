@@ -7,7 +7,7 @@ internal sealed record MethodSourceCodesOfType(MethodSourceCodeCollection Method
 {
     private readonly MethodSourceCode _firstMethodSourceCode = MethodSourceCodes.Values.First();
 
-    public bool GenerateExtensionClass => _firstMethodSourceCode.GenerateExtensionMethod;
+    internal bool GenerateExtensionClass => _firstMethodSourceCode.GenerateExtensionMethod;
 
-    public ContainingType ContainingType => _firstMethodSourceCode.ContainingType;
+    internal ContainingType ContainingType => _firstMethodSourceCode.ContainingType;
 }

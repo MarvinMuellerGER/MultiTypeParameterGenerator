@@ -8,15 +8,12 @@ using MultiTypeParameterGenerator.Generation.Models.Collections;
 namespace MultiTypeParameterGenerator;
 
 [Generator]
-public class Generator : IIncrementalGenerator
+internal class Generator : IIncrementalGenerator
 {
     private static readonly IList<IMethodSymbol> ProcessedMethods = new List<IMethodSymbol>();
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterPostInitializationOutput(ctx =>
-            ctx.AddSources(Composition.Instance.AttributesDefinition.AttributeDefinitions.SourceCodeFiles));
-
         context.RegisterSourceOutput(
             GetMethodsToGenerate(context).Collect().SelectMany((methodsToGenerate, _) =>
                 methodsToGenerate.SelectMany(methodToGenerate => methodToGenerate)),
@@ -28,7 +25,7 @@ public class Generator : IIncrementalGenerator
     {
         var incrementalValuesProvider = context.SyntaxProvider
             .ForPolyGenericAttributeWithMetadataName(
-                Composition.Instance.AttributesDefinition.AcceptedTypesAttributeDefinition.FullName,
+                typeof(AcceptedTypesAttribute).FullName!,
                 static (_, _) => true,
                 GetMethodsToGenerate)
             .Where(static m => m is not null)

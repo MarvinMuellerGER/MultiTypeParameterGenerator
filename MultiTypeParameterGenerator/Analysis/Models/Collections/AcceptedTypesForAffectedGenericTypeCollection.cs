@@ -7,7 +7,7 @@ namespace MultiTypeParameterGenerator.Analysis.Models.Collections;
 
 internal sealed record AcceptedTypesForAffectedGenericTypeCollection
 {
-    public AcceptedTypesForAffectedGenericTypeCollection(
+    internal AcceptedTypesForAffectedGenericTypeCollection(
         params IReadOnlyList<AcceptedTypesForAffectedGenericType> Values)
     {
         var countByShortTypeName = new Dictionary<AcceptedTypeName, (AcceptedTypeName FullName, int Count)>();
@@ -38,5 +38,5 @@ internal sealed record AcceptedTypesForAffectedGenericTypeCollection
         });
     }
 
-    public IReadOnlyList<AcceptedTypesForAffectedGenericType> Values { get; }
+    internal IReadOnlyList<AcceptedTypesForAffectedGenericType> Values { get; }
 }

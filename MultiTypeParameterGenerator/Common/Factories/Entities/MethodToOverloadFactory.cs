@@ -5,7 +5,6 @@ using MultiTypeParameterGenerator.Analysis.Extensions.Enums;
 using MultiTypeParameterGenerator.Analysis.Models.Collections;
 using MultiTypeParameterGenerator.Analysis.Models.Entities;
 using MultiTypeParameterGenerator.Analysis.Models.TypedValues;
-using MultiTypeParameterGenerator.Common.Attributes;
 using MultiTypeParameterGenerator.Common.Extensions.Collections;
 using MultiTypeParameterGenerator.Common.Models.Collections;
 using MultiTypeParameterGenerator.Common.Models.Entities;
@@ -15,14 +14,8 @@ using TypeName = MultiTypeParameterGenerator.Common.Models.TypedValues.TypeName;
 
 namespace MultiTypeParameterGenerator.Common.Factories.Entities;
 
-internal class MethodToOverloadFactory(IAttributesDefinition attributesDefinition) : IMethodToOverloadFactory
+internal class MethodToOverloadFactory : IMethodToOverloadFactory
 {
-    private string AccessModifiersAttributeTypeName =>
-        attributesDefinition.AccessModifiersAttributeDefinition.FullName.TypeName.Value;
-
-    private string AcceptedTypesAttributeTypeName =>
-        attributesDefinition.AcceptedTypesAttributeDefinition.FullName.TypeName.Value;
-
     public MethodToOverload? Create(IMethodSymbol method)
     {
         if (method.ContainingType is not { } containingType)
@@ -88,7 +81,7 @@ internal class MethodToOverloadFactory(IAttributesDefinition attributesDefinitio
     private AccessModifierNameCollection GetAccessModifiers(IMethodSymbol method)
     {
         var accessModifiersAttribute = method.GetAttributes()
-            .SingleOrDefault(a => a.AttributeClass?.Name == AccessModifiersAttributeTypeName);
+            .SingleOrDefault(a => a.AttributeClass?.Name == nameof(AccessModifiersAttribute));
         var accessModifiersEnum = (AccessModifier?)(int?)accessModifiersAttribute?.ConstructorArguments[0].Value;
 
         List<AccessModifierName> accessModifiers = [];
@@ -138,7 +131,7 @@ internal class MethodToOverloadFactory(IAttributesDefinition attributesDefinitio
     private AcceptedTypesAttributeInformation GetAcceptedTypesAttributeInformation(ITypeParameterSymbol type)
     {
         var acceptedTypesAttribute = type.GetAttributes()
-            .SingleOrDefault(a => a.AttributeClass?.Name == AcceptedTypesAttributeTypeName);
+            .SingleOrDefault(a => a.AttributeClass?.Name == nameof(AcceptedTypesAttribute));
 
         var types = acceptedTypesAttribute?.AttributeClass?.TypeArguments ?? [];
 

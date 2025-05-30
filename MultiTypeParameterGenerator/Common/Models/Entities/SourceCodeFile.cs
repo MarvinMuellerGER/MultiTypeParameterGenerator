@@ -6,5 +6,5 @@ namespace MultiTypeParameterGenerator.Common.Models.Entities;
 
 internal readonly record struct SourceCodeFile(FileName FileName, SourceCode SourceCode)
 {
-    public SourceCode SourceCode { get; } = SourceGeneratedFileHeader + SourceCode;
+    internal SourceCode SourceCode { get; } = SourceGeneratedFileHeader + SourceCode;
 }

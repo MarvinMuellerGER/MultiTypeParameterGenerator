@@ -1,10 +1,8 @@
 namespace MultiTypeParameterGenerator.Common.Models.TypedValues;
 
-public sealed record SourceCode(string Value)
+internal sealed record SourceCode(string Value)
 {
-    public SourceCode() : this(string.Empty)
-    {
-    }
+    internal SourceCode() : this(string.Empty) { }
 
     public override string ToString() => Value;
 

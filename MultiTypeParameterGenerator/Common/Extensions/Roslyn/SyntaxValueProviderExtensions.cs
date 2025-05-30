@@ -9,21 +9,11 @@ internal static class SyntaxValueProviderExtensions
 {
     internal static IncrementalValuesProvider<T> ForPolyGenericAttributeWithMetadataName<T>(
         this SyntaxValueProvider syntaxValueProvider,
-        FullTypeName fullyQualifiedMetadataName,
+        string fullyQualifiedMetadataName,
         Func<SyntaxNode, CancellationToken, bool> predicate,
         Func<GeneratorAttributeSyntaxContext, CancellationToken, T> transform,
         int minGenericTypesCount = 2,
         int maxGenericTypesCount = 10) =>
-        syntaxValueProvider.ForPolyGenericAttributeWithMetadataName(
-            fullyQualifiedMetadataName.Value, predicate, transform, minGenericTypesCount, maxGenericTypesCount);
-
-    private static IncrementalValuesProvider<T> ForPolyGenericAttributeWithMetadataName<T>(
-        this SyntaxValueProvider syntaxValueProvider,
-        string fullyQualifiedMetadataName,
-        Func<SyntaxNode, CancellationToken, bool> predicate,
-        Func<GeneratorAttributeSyntaxContext, CancellationToken, T> transform,
-        int minGenericTypesCount,
-        int maxGenericTypesCount) =>
         syntaxValueProvider.ForAttributesWithMetadataNames(GetGenericAttributeNames(
             fullyQualifiedMetadataName, minGenericTypesCount, maxGenericTypesCount), predicate, transform);
 

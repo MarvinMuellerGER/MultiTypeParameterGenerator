@@ -1,4 +1,5 @@
 ﻿<Solution>
-    <Project Path="MultiTypeParameterGenerator.Tests\MultiTypeParameterGenerator.Tests.csproj" Type="Classic C#"/>
-    <Project Path="MultiTypeParameterGenerator\MultiTypeParameterGenerator.csproj" Type="Classic C#"/>
+  <Project Path="MultiTypeParameterGenerator.Attributes\MultiTypeParameterGenerator.Attributes.csproj" Type="Classic C#" />
+  <Project Path="MultiTypeParameterGenerator.Tests\MultiTypeParameterGenerator.Tests.csproj" Type="Classic C#" />
+  <Project Path="MultiTypeParameterGenerator\MultiTypeParameterGenerator.csproj" Type="Classic C#" />
 </Solution>
