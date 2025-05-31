@@ -1,5 +1,9 @@
 # MultiTypeParameterGenerator
 
+[![NuGet](https://img.shields.io/nuget/v/MultiTypeParameterGenerator)](https://www.nuget.org/packages/MultiTypeParameterGenerator/)
+[![License](https://img.shields.io/badge/License-Apache2.0-green.svg)](LICENSE)
+[![GitHub Build](https://github.com/MarvinMuellerGER/MultiTypeParameterGenerator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/MarvinMuellerGER/MultiTypeParameterGenerator/actions/workflows/dotnet.yml)
+
 A C# source generator that creates method variants with multiple types for a single parameter, reducing boilerplate code
 and enabling type-safe APIs with broad type support.
 
