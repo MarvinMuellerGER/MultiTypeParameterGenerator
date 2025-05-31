@@ -5,6 +5,7 @@
         <RootNamespace>MultiTypeParameterGenerator</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IsPackable>false</IsPackable>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
