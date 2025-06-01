@@ -68,6 +68,8 @@ public class MethodSourceCodeFactoryTest
                 false,
                 new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
                 true,
+                new("SomeMethod"),
+                new("int, T1, T2"),
                 new("""
                        internal static void SomeMethod(int firstParam, bool secondParam, int? thirdParam) =>
                           SomeMethod<bool, int?>(firstParam, secondParam, thirdParam);

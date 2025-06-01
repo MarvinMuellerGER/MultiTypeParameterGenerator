@@ -1,61 +1,90 @@
+using MultiTypeParameterGenerator.Analysis.Models.TypedValues;
 using MultiTypeParameterGenerator.Common.Models.Entities;
 using MultiTypeParameterGenerator.Common.Models.TypedValues;
+using MultiTypeParameterGenerator.Generation.Factories.Entities;
 using MultiTypeParameterGenerator.Generation.Models.Entities;
 using MultiTypeParameterGenerator.Generation.Models.TypedValues;
 using static MultiTypeParameterGenerator.Common.Utils.Constants;
 
 namespace MultiTypeParameterGenerator.Common.Factories.Entities;
 
-internal class SourceCodeFileFactory : ISourceCodeFileFactory
+internal class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourceCodeFactory) : ISourceCodeFileFactory
 {
-    public SourceCodeFile Create(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        new(GetFileName(methodSourceCodesOfType), GetSourceCode(methodSourceCodesOfType));
+    private static readonly Dictionary<FileName, int> CountByFileName = [];
 
-    private static FileName GetFileName(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        new($"{methodSourceCodesOfType.ContainingType.Name}{GetPrefix(methodSourceCodesOfType)}.g.cs");
+    private static readonly Dictionary<(FileName FileName, SourceCode ParametersTypeNames), int>
+        IndexByFileNameAndParameters = [];
 
-    private static SourceCode GetSourceCode(MethodSourceCodesOfType methodSourceCodesOfType) =>
+    public SourceCodeFile Create(MethodToOverload methodToOverload) =>
+        Create(methodSourceCodeFactory.Create(methodToOverload));
+
+    private static SourceCodeFile Create(MethodSourceCode methodSourceCode) =>
+        new(GetFileName(methodSourceCode), GetSourceCode(methodSourceCode));
+
+    private static FileName GetFileName(MethodSourceCode methodSourceCode)
+    {
+        var fileNameWithoutExtension = new FileName(
+            $"{methodSourceCode.ContainingType.Name}{GetPrefix(methodSourceCode)}.{GetMethodNameForFileName(methodSourceCode)}");
+
+        var key = (fileNameWithoutExtension, methodSourceCode.ParametersTypeNames);
+        if (!IndexByFileNameAndParameters
+                .TryGetValue(key, out var index))
+        {
+            CountByFileName.TryGetValue(fileNameWithoutExtension, out var count);
+            index = count;
+            CountByFileName[fileNameWithoutExtension] = count + 1;
+            IndexByFileNameAndParameters[key] = index;
+        }
+
+        var countPrefix = index is 0 ? string.Empty : $"_{index + 1}";
+        return new($"{fileNameWithoutExtension}{countPrefix}.g.cs");
+    }
+
+    private static MethodName GetMethodNameForFileName(MethodSourceCode methodSourceCode) =>
+        methodSourceCode.MethodName;
+
+    private static SourceCode GetSourceCode(MethodSourceCode methodSourceCode) =>
         new($$"""
-              {{GetUsings(methodSourceCodesOfType)}}{{GetNamespace(methodSourceCodesOfType)}}
+              {{GetUsings(methodSourceCode)}}{{GetNamespace(methodSourceCode)}}
 
-              {{GetContainingTypeKindWithAccessModifiers(methodSourceCodesOfType)}} {{GetContainingTypeName(methodSourceCodesOfType)}}
+              {{GetContainingTypeKindWithAccessModifiers(methodSourceCode)}} {{GetContainingTypeName(methodSourceCode)}}
               {
-              {{methodSourceCodesOfType.MethodSourceCodes.SourceCode}}
+              {{methodSourceCode.SourceCode}}
               }
               """);
 
-    private static SourceCode GetUsings(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        new(IsStaticUsingOfContainingTypeRequired(methodSourceCodesOfType)
-            ? $"{NewLine}using static {methodSourceCodesOfType.ContainingType};{NewLine}"
+    private static SourceCode GetUsings(MethodSourceCode methodSourceCode) =>
+        new(IsStaticUsingOfContainingTypeRequired(methodSourceCode)
+            ? $"{NewLine}using static {methodSourceCode.ContainingType};{NewLine}"
             : string.Empty);
 
-    private static SourceCode GetNamespace(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        new($"namespace {methodSourceCodesOfType.ContainingType.Name.Namespace};");
+    private static SourceCode GetNamespace(MethodSourceCode methodSourceCode) =>
+        new($"namespace {methodSourceCode.ContainingType.Name.Namespace};");
 
     private static SourceCode
-        GetContainingTypeKindWithAccessModifiers(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        new(methodSourceCodesOfType.GenerateExtensionClass
+        GetContainingTypeKindWithAccessModifiers(MethodSourceCode methodSourceCode) =>
+        new(methodSourceCode.GenerateExtensionMethod
             ? "public static class"
-            : $"partial {methodSourceCodesOfType.ContainingType.Kind}");
+            : $"partial {methodSourceCode.ContainingType.Kind}");
 
-    private static SourceCode GetContainingTypeName(MethodSourceCodesOfType methodSourceCodesOfType) =>
+    private static SourceCode GetContainingTypeName(MethodSourceCode methodSourceCode) =>
         new(
-            $"{methodSourceCodesOfType.ContainingType.Name.TypeName}{GetPrefix(methodSourceCodesOfType)}{GetGenericTypes(methodSourceCodesOfType)}{GetTypeConstraints(methodSourceCodesOfType)}");
+            $"{methodSourceCode.ContainingType.Name.TypeName}{GetPrefix(methodSourceCode)}{GetGenericTypes(methodSourceCode)}{GetTypeConstraints(methodSourceCode)}");
 
-    private static SourceCode GetGenericTypes(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        methodSourceCodesOfType.ContainingType.GenericTypes.SourceCode;
+    private static SourceCode GetGenericTypes(MethodSourceCode methodSourceCode) =>
+        methodSourceCode.ContainingType.GenericTypes.SourceCode;
 
-    private static SourceCode GetTypeConstraints(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        methodSourceCodesOfType.GenerateExtensionClass
-            ? methodSourceCodesOfType.ContainingType.GenericTypes.ConstraintsSourceCode
+    private static SourceCode GetTypeConstraints(MethodSourceCode methodSourceCode) =>
+        methodSourceCode.GenerateExtensionMethod
+            ? methodSourceCode.ContainingType.GenericTypes.ConstraintsSourceCode
             : new();
 
-    private static SourceCode GetPrefix(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        new(methodSourceCodesOfType.GenerateExtensionClass
+    private static SourceCode GetPrefix(MethodSourceCode methodSourceCode) =>
+        new(methodSourceCode.GenerateExtensionMethod
             ? "Extensions"
             : string.Empty);
 
-    private static bool IsStaticUsingOfContainingTypeRequired(MethodSourceCodesOfType methodSourceCodesOfType) =>
-        methodSourceCodesOfType is
-            { GenerateExtensionClass: true, MethodSourceCodes.AnyMethodToOverloadIsStatic: true };
+    private static bool IsStaticUsingOfContainingTypeRequired(MethodSourceCode methodSourceCode) =>
+        methodSourceCode is
+            { GenerateExtensionMethod: true, MethodToOverloadIsStatic: true };
 }

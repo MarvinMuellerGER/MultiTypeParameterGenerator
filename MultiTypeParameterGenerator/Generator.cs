@@ -3,7 +3,6 @@ using MultiTypeParameterGenerator.Common.Extensions.Collections;
 using MultiTypeParameterGenerator.Common.Extensions.Roslyn;
 using MultiTypeParameterGenerator.Common.Models.Entities;
 using MultiTypeParameterGenerator.Common.Utils;
-using MultiTypeParameterGenerator.Generation.Models.Collections;
 
 namespace MultiTypeParameterGenerator;
 
@@ -15,9 +14,9 @@ internal class Generator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         context.RegisterSourceOutput(
-            GetMethodsToGenerate(context).Collect().SelectMany((methodsToGenerate, _) =>
-                methodsToGenerate.SelectMany(methodToGenerate => methodToGenerate)),
-            static (context, source) => Execute(context, new(source)));
+            GetMethodsToGenerate(context).SelectMany((methodsToOverload, _) =>
+                methodsToOverload),
+            static (context, source) => Execute(context, source));
     }
 
     private static IncrementalValuesProvider<IReadOnlyList<MethodToOverload>> GetMethodsToGenerate(
@@ -80,13 +79,13 @@ internal class Generator : IIncrementalGenerator
         }
     }
 
-    private static void Execute(SourceProductionContext context, in MethodToOverloadCollection methodsToOverload)
+    private static void Execute(SourceProductionContext context, in MethodToOverload methodToOverload)
     {
         context.CancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            context.AddSources(Composition.Instance.SourceCodeFileCollectionFactory.Create(methodsToOverload));
+            context.AddSource(Composition.Instance.SourceCodeFileFactory.Create(methodToOverload));
         }
         catch (Exception e)
         {

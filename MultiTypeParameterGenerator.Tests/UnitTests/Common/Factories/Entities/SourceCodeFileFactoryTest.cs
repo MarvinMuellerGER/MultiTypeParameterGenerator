@@ -1,5 +1,8 @@
 using MultiTypeParameterGenerator.Common.Factories.Entities;
+using MultiTypeParameterGenerator.Common.Models.Entities;
+using MultiTypeParameterGenerator.Generation.Factories.Entities;
 using MultiTypeParameterGenerator.Generation.Models.Entities;
+using NSubstitute;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Factories.Entities;
 
@@ -22,22 +25,35 @@ public class SourceCodeFileFactoryTest
                 }
                 """;
 
-            var methodSourceCodesOfType = new MethodSourceCodesOfType(new([
+            var methodToOverload = new MethodToOverload(
+                false,
+                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
+                new(),
+                new(new("void")),
+                new("SomeMethod"),
+                new([new(new("T"))]),
+                new(),
+                new());
+
+            var expectedMethodSourceCodes = new MethodSourceCode(
+                false,
+                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()), true,
+                new("SomeMethod"),
+                new("int"),
                 new(
-                    false,
-                    new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()), true,
-                    new(
-                        """
-                           static void SomeMethod<T>(int x) =>
-                              SomeMethod<T>(x);
-                        """))
-            ]));
+                    """
+                       static void SomeMethod<T>(int x) =>
+                          SomeMethod<T>(x);
+                    """));
+
+            var methodSourceCodeCollectionFactory = Substitute.For<IMethodSourceCodeFactory>();
+            methodSourceCodeCollectionFactory.Create(methodToOverload).Returns(expectedMethodSourceCodes);
 
             // Act
-            var sourceCodeFile = new SourceCodeFileFactory().Create(methodSourceCodesOfType);
+            var sourceCodeFile = new SourceCodeFileFactory(methodSourceCodeCollectionFactory).Create(methodToOverload);
 
             // Assert
-            sourceCodeFile.FileName.Value.Should().Be("SomeNamespace.SomeClass.g.cs");
+            sourceCodeFile.FileName.Value.Should().Be("SomeNamespace.SomeClass.SomeMethod.g.cs");
             sourceCodeFile.SourceCode.Value.Should().EndWith(expectedSourceCode);
         }
     }

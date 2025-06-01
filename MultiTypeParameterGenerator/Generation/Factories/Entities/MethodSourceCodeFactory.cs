@@ -19,6 +19,8 @@ internal class MethodSourceCodeFactory(
             methodToOverload.GenerateExtensionMethod,
             methodToOverload.ContainingType,
             methodToOverload.MethodToOverloadIsStatic,
+            methodToOverload.Name,
+            methodToOverload.Parameters.TypeNamesSourceCode,
             GetSourceCode(methodToOverload));
 
     private SourceCode GetSourceCode(MethodToOverload methodToOverload) =>
