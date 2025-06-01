@@ -10,7 +10,7 @@ namespace MultiTypeParameterGenerator.Analysis.Models.Collections;
 internal sealed record ParameterCollection(params IReadOnlyList<Parameter> Values)
 {
     internal SourceCode NamesSourceCode => new(Values.Select(p => p.Name).Join());
-    
+
     internal SourceCode TypeNamesSourceCode => new(Values.Select(p => p.TypeNameForSourceCode).Join());
 
     internal SourceCode SourceCode => new(Values.Select(p => p.SourceCode).Join());
