@@ -12,8 +12,8 @@ public class ParameterCollectionTest
         {
             // Arrange
             var collection = new ParameterCollection(
-                new(new("string"), new("firstParam")),
-                new(new("int"), new("secondParam")));
+                new(new(null, new("string")), new("firstParam")),
+                new(new(null, new("int")), new("secondParam")));
 
             // Act & Assert
             collection.NamesSourceCode.Value.Should().Be("firstParam, secondParam");
@@ -27,8 +27,8 @@ public class ParameterCollectionTest
         {
             // Arrange
             var collection = new ParameterCollection(
-                new(new("string"), new("firstParam")) { TypeNameForSourceCode = new("T1") },
-                new(new("int"), new("secondParam")));
+                new(new(null, new("string")), new("firstParam")) { TypeNameForSourceCode = new("T1") },
+                new(new(null, new("int")), new("secondParam")));
 
             // Act & Assert
             collection.SourceCode.Value.Should().Be("T1 firstParam, int secondParam");
@@ -42,12 +42,12 @@ public class ParameterCollectionTest
         {
             // Arrange
             var collection = new ParameterCollection(
-                new(new("T1"), new("p1")),
-                new(new("T2"), new("p2")));
+                new(new(null, new("T1")), new("p1")),
+                new(new(null, new("T2")), new("p2")));
 
             var combination = new AcceptedTypeCombination(
-                new(new(new("T1")), false, new(new("bool"), true, false)),
-                new(new(new("T2")), false, new(new("SomeRecord"), false, true)));
+                new(new(new("T1")), false, new(new(null, new("bool")), true, false)),
+                new(new(new("T2")), false, new(new(null, new("SomeRecord")), false, true)));
 
             // Act
             var updated = collection.WithAcceptedTypes(combination);
@@ -64,14 +64,15 @@ public class ParameterCollectionTest
     public class WithThisParameterIfNecessaryMethod
     {
         private static readonly MethodToOverload MethodToOverload = new(
+            false,
             true,
             new(new("Class"), new(new("SomeNamespace"), new("SomeClass")), new()),
             new([new("public")]),
-            new(new("void")),
+            new(null, new("void")),
             new("SomeMethod"),
             new(),
             new(),
-            new([new(new("int"), new("x"))]));
+            new([new(new(null, new("int")), new("x"))]));
 
         [Fact]
         public void Should_AddThisParameter_WhenGenerateExtensionMethodIsTrue()

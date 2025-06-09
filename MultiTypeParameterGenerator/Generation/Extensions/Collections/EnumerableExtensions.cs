@@ -2,9 +2,6 @@ namespace MultiTypeParameterGenerator.Generation.Extensions.Collections;
 
 internal static class EnumerableExtensions
 {
-    internal static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action) =>
-        source.ToList().ForEach(action);
-
     internal static IReadOnlyList<TSource> ToReadonlyList<TSource>(this IEnumerable<TSource> source) =>
         source.ToList();
 

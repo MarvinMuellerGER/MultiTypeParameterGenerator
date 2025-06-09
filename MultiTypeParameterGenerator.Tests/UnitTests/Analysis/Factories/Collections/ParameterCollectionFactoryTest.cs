@@ -13,16 +13,17 @@ public class ParameterCollectionFactoryTest
             // Arrange
             var methodToOverload = new MethodToOverload(
                 false,
+                false,
                 new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
                 new([new("public")]),
-                new(new("void")),
+                new(null, new("void")),
                 new("SomeMethod"),
                 new(),
                 new(),
-                new([new(new("T1"), new("value"))]));
+                new([new(new(null, new("T1")), new("value"))]));
 
             var acceptedTypeCombination =
-                new AcceptedTypeCombination([new(new(new("T1")), false, new(new("int"), false, false))]);
+                new AcceptedTypeCombination([new(new(new("T1")), false, new(new(null, new("int")), false, false))]);
 
             // Act
             var result = new ParameterCollectionFactory().Create(methodToOverload, acceptedTypeCombination);

@@ -1,5 +1,6 @@
 using MultiTypeParameterGenerator.Analysis.Models.Entities;
 using MultiTypeParameterGenerator.Common.Extensions.Collections;
+using MultiTypeParameterGenerator.Common.Models.Collections;
 using MultiTypeParameterGenerator.Common.Models.Entities;
 using MultiTypeParameterGenerator.Common.Models.TypedValues;
 using static MultiTypeParameterGenerator.Common.Utils.Constants;
@@ -15,13 +16,17 @@ internal sealed record ParameterCollection(params IReadOnlyList<Parameter> Value
 
     internal SourceCode SourceCode => new(Values.Select(p => p.SourceCode).Join());
 
+    internal FullTypeNameCollection FullTypeNames => new(Values.Select(p => p.Type));
+
     internal ParameterCollection WithAcceptedTypes(AcceptedTypeCombination acceptedTypeCombination) =>
         new(Values.ReplaceAll(p =>
-            p with { TypeNameForSourceCode = new(p.Type.WithAcceptedTypes(acceptedTypeCombination).Value) }));
+            p with { TypeNameForSourceCode = new(p.Type.WithAcceptedTypes(acceptedTypeCombination).TypeName.Value) }));
 
     internal ParameterCollection WithThisParameterIfNecessary(MethodToOverload methodToOverload) =>
         methodToOverload.GenerateExtensionMethod ? WithThisParameter(methodToOverload) : this;
 
     private ParameterCollection WithThisParameter(MethodToOverload methodToOverload) =>
-        new(Values.Prepend(new(new(methodToOverload.ContainingType.Name.Value), new(ThisIdentifier))).ToList());
+        new(Values.Prepend(new(
+            methodToOverload.ContainingType.Name,
+            new(ThisIdentifier))).ToList());
 }

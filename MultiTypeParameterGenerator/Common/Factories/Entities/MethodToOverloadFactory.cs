@@ -10,6 +10,8 @@ using MultiTypeParameterGenerator.Common.Models.Collections;
 using MultiTypeParameterGenerator.Common.Models.Entities;
 using MultiTypeParameterGenerator.Common.Models.TypedValues;
 using static Microsoft.CodeAnalysis.TypeKind;
+using static MultiTypeParameterGenerator.Common.Extensions.StringExtensions;
+using FullTypeName = MultiTypeParameterGenerator.Common.Models.Entities.FullTypeName;
 using TypeName = MultiTypeParameterGenerator.Common.Models.TypedValues.TypeName;
 
 namespace MultiTypeParameterGenerator.Common.Factories.Entities;
@@ -22,11 +24,15 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
             // nothing to do if this method isn't used in a type
             return null;
 
+        var useFullTypeNames = method.ContainingAssembly.GetAttributes()
+            .Any(a => a.AttributeClass?.Name is nameof(UseFullTypeNamesAttribute));
+
         var containingTypeKind = GetOverloadingSupportingContainingTypeKindNameOrNull(containingType);
         var generateExtensionMethod = false;
         if (ShouldGenerateExtensionMethod(method, containingTypeKind, ref generateExtensionMethod)) return null;
 
-        return new(generateExtensionMethod,
+        return new(useFullTypeNames,
+            generateExtensionMethod,
             GetContainingType(containingTypeKind, containingType),
             GetAccessModifiers(method),
             GetReturnType(method),
@@ -36,7 +42,7 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
             GetParameters(method));
     }
 
-    private ContainingType
+    private static ContainingType
         GetContainingType(TypeKindName? containingTypeKind, INamedTypeSymbol containingType) =>
         new(containingTypeKind, GetFullContainingTypeName(containingType),
             GetGenericTypesOfContainingType(containingType));
@@ -52,8 +58,8 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
             containingType.IsValueType ? "struct" : "class");
     }
 
-    private static bool ShouldGenerateExtensionMethod(IMethodSymbol method, TypeKindName? containingTypeKind,
-        ref bool generateExtensionMethod)
+    private static bool ShouldGenerateExtensionMethod(
+        IMethodSymbol method, TypeKindName? containingTypeKind, ref bool generateExtensionMethod)
     {
         if (containingTypeKind is not null)
             return false;
@@ -67,21 +73,13 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
         return false;
     }
 
-    private static FullTypeName GetFullContainingTypeName(ITypeSymbol containingType) =>
-        new(GetContainingNamespace(containingType), GetContainingTypeName(containingType));
-
-    private static Namespace GetContainingNamespace(ITypeSymbol containingType) =>
-        new(containingType.ContainingNamespace.ToString());
-
-    private static TypeName GetContainingTypeName(ITypeSymbol containingType) => new(containingType.Name);
-
     private static GenericTypeCollection GetGenericTypesOfContainingType(INamedTypeSymbol containingType) =>
         GetGenericTypesOfTypeParameters(containingType.TypeParameters);
 
-    private AccessModifierNameCollection GetAccessModifiers(IMethodSymbol method)
+    private static AccessModifierNameCollection GetAccessModifiers(IMethodSymbol method)
     {
         var accessModifiersAttribute = method.GetAttributes()
-            .SingleOrDefault(a => a.AttributeClass?.Name == nameof(AccessModifiersAttribute));
+            .SingleOrDefault(a => a.AttributeClass?.Name is nameof(AccessModifiersAttribute));
         var accessModifiersEnum = (AccessModifier?)(int?)accessModifiersAttribute?.ConstructorArguments[0].Value;
 
         List<AccessModifierName> accessModifiers = [];
@@ -95,7 +93,7 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
         return new(accessModifiers);
     }
 
-    private static ReturnTypeName GetReturnType(IMethodSymbol method) => new(method.ReturnType.ToString());
+    private static FullTypeName GetReturnType(IMethodSymbol method) => GetFullTypeName(method.ReturnType);
 
     private static MethodName GetMethodName(IMethodSymbol method) => new(method.Name);
 
@@ -117,21 +115,21 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
                 tp.HasUnmanagedTypeConstraint,
                 tp.HasConstructorConstraint))));
 
-    private AcceptedTypesForAffectedGenericTypeCollection GetAffectedGenericTypes(IMethodSymbol method) =>
+    private static AcceptedTypesForAffectedGenericTypeCollection GetAffectedGenericTypes(IMethodSymbol method) =>
         new(method.TypeParameters.Select(typeParameter => new AcceptedTypesForAffectedGenericType(
                 new(new(typeParameter.Name)), GetAcceptedTypes(typeParameter)))
             .WhereToReadonlyList(affectedGenericType => affectedGenericType.AcceptedTypes.Values.Any()));
 
-    private AcceptedTypeCollection GetAcceptedTypes(ITypeParameterSymbol typeParameter)
+    private static AcceptedTypeCollection GetAcceptedTypes(ITypeParameterSymbol typeParameter)
     {
         var (types, asGenericTypes) = GetAcceptedTypesAttributeInformation(typeParameter);
         return new(types.SelectToReadonlyList(tp => GetAcceptedType(tp, asGenericTypes)));
     }
 
-    private AcceptedTypesAttributeInformation GetAcceptedTypesAttributeInformation(ITypeParameterSymbol type)
+    private static AcceptedTypesAttributeInformation GetAcceptedTypesAttributeInformation(ITypeParameterSymbol type)
     {
         var acceptedTypesAttribute = type.GetAttributes()
-            .SingleOrDefault(a => a.AttributeClass?.Name == nameof(AcceptedTypesAttribute));
+            .SingleOrDefault(a => a.AttributeClass?.Name is nameof(AcceptedTypesAttribute));
 
         var types = acceptedTypesAttribute?.AttributeClass?.TypeArguments ?? [];
 
@@ -155,8 +153,7 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
     /// <param name="contextTypeSymbol">The type symbol that provides the context for the search</param>
     /// <param name="typeName">The qualified name of the type to find</param>
     /// <returns>The found type symbol or null</returns>
-    private static TypeInformation? GetTypeSymbolByName(
-        ITypeSymbol contextTypeSymbol, string typeName)
+    private static TypeInformation? GetTypeSymbolByName(ITypeSymbol contextTypeSymbol, string typeName)
     {
         var typeNameParts = typeName.TrimEnd('?').Split('.');
 
@@ -214,16 +211,35 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
             type = ((INamedTypeSymbol)type).TypeArguments[0];
         }
 
-        return new(new(type.ToString()), typeInformation.IsNullable,
+        return new(GetFullTypeName(type), typeInformation.IsNullable,
             asGenericType && type is { IsReferenceType: true, IsSealed: false });
     }
 
     private static bool IsGenericType(ITypeSymbol type) =>
         Regex.IsMatch(type.ToString(), @"MultiTypeParameterGenerator\.GenericType<([\w\.]+)>");
 
-    private static ParameterCollection GetParameters(IMethodSymbol method) =>
-        new(method.Parameters.SelectToReadonlyList(p =>
-            new Parameter(new(p.Type.ToString()), new(p.Name))));
+    private static ParameterCollection GetParameters(IMethodSymbol method) => new(
+        method.Parameters.SelectToReadonlyList(p => new Parameter(GetFullTypeName(p.Type), new(p.Name))));
+
+    private static FullTypeName GetFullTypeName(ITypeSymbol type)
+    {
+        var @namespace = GetNamespace(type);
+        if (@namespace is not null && !type.ToString().Contains(@namespace.Value))
+            @namespace = null;
+
+        return new(@namespace, GetTypeName(type, @namespace));
+    }
+
+    private static FullTypeName GetFullContainingTypeName(ITypeSymbol type) =>
+        new(GetNamespace(type), GetTypeName(type));
+
+    private static Namespace? GetNamespace(ITypeSymbol type) =>
+        type.ContainingNamespace == null ? null : new(type.ContainingNamespace.ToString());
+
+    private static TypeName GetTypeName(ITypeSymbol type, Namespace? @namespace) =>
+        new(type.ToString().Remove($"{@namespace?.Value}."));
+
+    private static TypeName GetTypeName(ITypeSymbol type) => new(type.Name);
 
     private sealed record TypeInformation(ITypeSymbol Type, bool IsNullable);
 

@@ -18,5 +18,5 @@ internal sealed record GenericType(GenericTypeName Name, TypeConstraint? Constra
 
     internal static GenericType FromAcceptedType(AcceptedType acceptedType) =>
         new(new(acceptedType.TypeNameForSourceCode.Value),
-            acceptedType.UseTypeConstraint ? new(new(acceptedType.NameInclNullableAnnotation.Value)) : null);
+            acceptedType.UseTypeConstraint ? new(new(acceptedType.TypeNameInclNullableAnnotation.Value)) : null);
 }

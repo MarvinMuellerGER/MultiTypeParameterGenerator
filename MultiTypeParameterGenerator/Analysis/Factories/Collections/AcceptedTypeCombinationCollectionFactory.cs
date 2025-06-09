@@ -1,7 +1,6 @@
 using MultiTypeParameterGenerator.Analysis.Extensions.Collections;
 using MultiTypeParameterGenerator.Analysis.Models.Collections;
 using MultiTypeParameterGenerator.Analysis.Models.Entities;
-using MultiTypeParameterGenerator.Analysis.Models.TypedValues;
 using MultiTypeParameterGenerator.Common.Extensions.Collections;
 using MultiTypeParameterGenerator.Common.Models.Entities;
 
@@ -20,7 +19,7 @@ internal class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCombinati
                 affectedGenericType => affectedGenericType.AcceptedTypes.Values).GetCombinations()
             .SelectToReadonlyList(acceptedTypeList =>
             {
-                var countByGenericAcceptedType = new Dictionary<AcceptedTypeName, int>();
+                var countByGenericAcceptedType = new Dictionary<FullTypeName, int>();
 
                 return new AcceptedTypeCombination(
                     acceptedTypeList.SelectToReadonlyList(item =>

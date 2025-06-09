@@ -1,10 +1,12 @@
 using MultiTypeParameterGenerator.Analysis.Models.TypedValues;
+using MultiTypeParameterGenerator.Common.Extensions;
 using MultiTypeParameterGenerator.Common.Models.Entities;
 using MultiTypeParameterGenerator.Common.Models.TypedValues;
 using MultiTypeParameterGenerator.Generation.Factories.Entities;
 using MultiTypeParameterGenerator.Generation.Models.Entities;
 using MultiTypeParameterGenerator.Generation.Models.TypedValues;
 using static MultiTypeParameterGenerator.Common.Utils.Constants;
+using static MultiTypeParameterGenerator.Common.Extensions.Collections.EnumerableExtensions;
 
 namespace MultiTypeParameterGenerator.Common.Factories.Entities;
 
@@ -24,7 +26,7 @@ internal class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourceCodeFa
     private static FileName GetFileName(MethodSourceCode methodSourceCode)
     {
         var fileNameWithoutExtension = new FileName(
-            $"{methodSourceCode.ContainingType.Name}{GetPrefix(methodSourceCode)}.{GetMethodNameForFileName(methodSourceCode)}");
+            $"{methodSourceCode.ContainingType.FullNameWithGenericTypesCount}{GetPrefix(methodSourceCode)}.{GetMethodNameForFileName(methodSourceCode)}");
 
         var key = (fileNameWithoutExtension, methodSourceCode.ParametersTypeNames);
         if (!IndexByFileNameAndParameters
@@ -45,18 +47,13 @@ internal class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourceCodeFa
 
     private static SourceCode GetSourceCode(MethodSourceCode methodSourceCode) =>
         new($$"""
-              {{GetUsings(methodSourceCode)}}{{GetNamespace(methodSourceCode)}}
+              {{GetUsings(methodSourceCode)}}{{GetAliasUsings(methodSourceCode)}}{{GetStaticUsingOfContainingTypeIfRequired(methodSourceCode)}}{{GetNamespace(methodSourceCode)}}
 
               {{GetContainingTypeKindWithAccessModifiers(methodSourceCode)}} {{GetContainingTypeName(methodSourceCode)}}
               {
-              {{methodSourceCode.SourceCode}}
+              {{methodSourceCode.SourceCode.Value.RemoveMultiple(GetNamespacesToRemove(methodSourceCode))}}
               }
               """);
-
-    private static SourceCode GetUsings(MethodSourceCode methodSourceCode) =>
-        new(IsStaticUsingOfContainingTypeRequired(methodSourceCode)
-            ? $"{NewLine}using static {methodSourceCode.ContainingType};{NewLine}"
-            : string.Empty);
 
     private static SourceCode GetNamespace(MethodSourceCode methodSourceCode) =>
         new($"namespace {methodSourceCode.ContainingType.Name.Namespace};");
@@ -71,6 +68,9 @@ internal class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourceCodeFa
         new(
             $"{methodSourceCode.ContainingType.Name.TypeName}{GetPrefix(methodSourceCode)}{GetGenericTypes(methodSourceCode)}{GetTypeConstraints(methodSourceCode)}");
 
+    private static IReadOnlyList<string> GetNamespacesToRemove(MethodSourceCode methodSourceCode) =>
+        methodSourceCode.NamespacesToRemove.Values.SelectToReadonlyList(n => $"{n}.");
+
     private static SourceCode GetGenericTypes(MethodSourceCode methodSourceCode) =>
         methodSourceCode.ContainingType.GenericTypes.SourceCode;
 
@@ -82,6 +82,33 @@ internal class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourceCodeFa
     private static SourceCode GetPrefix(MethodSourceCode methodSourceCode) =>
         new(methodSourceCode.GenerateExtensionMethod
             ? "Extensions"
+            : string.Empty);
+
+    private static SourceCode GetUsings(MethodSourceCode methodSourceCode) =>
+        new(methodSourceCode.NamespacesToImport.Values.Any()
+            ? $"""
+               {methodSourceCode.NamespacesToImport.Values.Select(n => $"using {n};").Join(NewLine)}
+
+
+               """
+            : string.Empty);
+
+    private static SourceCode GetAliasUsings(MethodSourceCode methodSourceCode) =>
+        new(methodSourceCode.FullTypeNamesWithTypeAlias.Values.Any()
+            ? $"""
+               {methodSourceCode.FullTypeNamesWithTypeAlias.Values.Select(t => $"using {t.Alias} = {t};").Join(NewLine)}
+
+
+               """
+            : string.Empty);
+
+    private static SourceCode GetStaticUsingOfContainingTypeIfRequired(MethodSourceCode methodSourceCode) =>
+        new(IsStaticUsingOfContainingTypeRequired(methodSourceCode)
+            ? $"""
+               using static {methodSourceCode.ContainingType};
+
+
+               """
             : string.Empty);
 
     private static bool IsStaticUsingOfContainingTypeRequired(MethodSourceCode methodSourceCode) =>

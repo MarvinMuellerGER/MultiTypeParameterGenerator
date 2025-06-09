@@ -16,11 +16,13 @@ internal class MethodSourceCodeFactory(
 {
     public MethodSourceCode Create(MethodToOverload methodToOverload) =>
         new(
+            methodToOverload.UseFullTypeNames,
             methodToOverload.GenerateExtensionMethod,
             methodToOverload.ContainingType,
             methodToOverload.MethodToOverloadIsStatic,
             methodToOverload.Name,
             methodToOverload.Parameters.TypeNamesSourceCode,
+            methodToOverload.FullTypeNames,
             GetSourceCode(methodToOverload));
 
     private SourceCode GetSourceCode(MethodToOverload methodToOverload) =>

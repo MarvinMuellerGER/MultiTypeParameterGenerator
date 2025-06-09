@@ -10,7 +10,7 @@ public class ParameterTest
         public void Should_ReturnTypeFollowedByName()
         {
             // Arrange
-            var parameter = new Parameter(new("int"), new("myParam"));
+            var parameter = new Parameter(new(null, new("int")), new("myParam"));
 
             // Act & Assert
             parameter.SourceCode.Value.Should().Be("int myParam");
@@ -20,7 +20,7 @@ public class ParameterTest
         public void Should_UseTypeNameForSourceCode()
         {
             // Arrange
-            var parameter = new Parameter(new("int"), new("myParam")) { TypeNameForSourceCode = new("T1") };
+            var parameter = new Parameter(new(null, new("int")), new("myParam")) { TypeNameForSourceCode = new("T1") };
 
             // Act & Assert
             parameter.SourceCode.Value.Should().Be("T1 myParam");

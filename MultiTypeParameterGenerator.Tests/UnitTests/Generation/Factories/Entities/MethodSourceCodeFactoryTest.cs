@@ -17,33 +17,34 @@ public class MethodSourceCodeFactoryTest
             // Arrange
             var methodToOverload = new MethodToOverload(
                 false,
+                false,
                 new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
                 new(new("internal"), new("static")),
-                new(new("void")),
+                new(null, new("void")),
                 new("SomeMethod"),
                 new(new(new("T1")), new(new("T2"))),
                 new(
                     new(new(new("T1")), new(
-                        new(new("bool"), false, false),
-                        new(new("SomeRecord"), true, true))),
+                        new(new(null, new("bool")), false, false),
+                        new(new(null, new("SomeRecord")), true, true))),
                     new(new(new("T2")), new(
-                        new(new("int"), true, false),
-                        new(new("SomeRecord"), false, true)))),
+                        new(new(null, new("int")), true, false),
+                        new(new(null, new("SomeRecord")), false, true)))),
                 new(
-                    new(new("int"), new("firstParam")),
-                    new(new("T1"), new("secondParam")),
-                    new(new("T2"), new("thirdParam"))));
+                    new(new(null, new("int")), new("firstParam")),
+                    new(new(null, new("T1")), new("secondParam")),
+                    new(new(null, new("T2")), new("thirdParam"))));
 
             var acceptedTypeCombinationCollection =
                 new AcceptedTypeCombinationCollection(
-                    new(new(new(new("T1")), false, new(new("bool"), false, false, 1)),
-                        new(new(new("T2")), false, new(new("int"), true, false, 1))),
-                    new(new(new(new("T1")), false, new(new("bool"), false, false, 1)),
-                        new(new(new("T2")), false, new(new("SomeRecord"), false, true, 1, 1))),
-                    new(new(new(new("T1")), false, new(new("SomeRecord"), true, true, 1, 1)),
-                        new(new(new("T2")), false, new(new("int"), true, false, 1))),
-                    new(new(new(new("T1")), false, new(new("SomeRecord"), true, true, 1, 1)),
-                        new(new(new("T2")), false, new(new("SomeRecord"), false, true, 1, 2))));
+                    new(new(new(new("T1")), false, new(new(null, new("bool")), false, false, 1)),
+                        new(new(new("T2")), false, new(new(null, new("int")), true, false, 1))),
+                    new(new(new(new("T1")), false, new(new(null, new("bool")), false, false, 1)),
+                        new(new(new("T2")), false, new(new(null, new("SomeRecord")), false, true, 1, 1))),
+                    new(new(new(new("T1")), false, new(new(null, new("SomeRecord")), true, true, 1, 1)),
+                        new(new(new("T2")), false, new(new(null, new("int")), true, false, 1))),
+                    new(new(new(new("T1")), false, new(new(null, new("SomeRecord")), true, true, 1, 1)),
+                        new(new(new("T2")), false, new(new(null, new("SomeRecord")), false, true, 1, 2))));
 
             var acceptedTypeCombinationCollectionFactory = Substitute.For<IAcceptedTypeCombinationCollectionFactory>();
             acceptedTypeCombinationCollectionFactory.Create(methodToOverload)
@@ -52,13 +53,13 @@ public class MethodSourceCodeFactoryTest
             var parameterCollectionFactory = Substitute.For<IParameterCollectionFactory>();
             parameterCollectionFactory.Create(methodToOverload, Arg.Any<AcceptedTypeCombination>())
                 .Returns(args => new(
-                    new(new("int"), new("firstParam")),
-                    new(new("T1"), new("secondParam"))
+                    new(new(null, new("int")), new("firstParam")),
+                    new(new(null, new("T1")), new("secondParam"))
                     {
                         TypeNameForSourceCode =
                             args.Arg<AcceptedTypeCombination>().Values[0].AcceptedType.TypeNameForSourceCode
                     },
-                    new(new("T2"), new("thirdParam"))
+                    new(new(null, new("T2")), new("thirdParam"))
                     {
                         TypeNameForSourceCode =
                             args.Arg<AcceptedTypeCombination>().Values[1].AcceptedType.TypeNameForSourceCode
@@ -66,10 +67,17 @@ public class MethodSourceCodeFactoryTest
 
             var expectedMethodSourceCode = new MethodSourceCode(
                 false,
+                false,
                 new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
                 true,
                 new("SomeMethod"),
                 new("int, T1, T2"),
+                new(new(null, new("int")),
+                    new(null, new("T1")),
+                    new(null, new("T2")),
+                    new(null, new("bool")),
+                    new(null, new("SomeRecord")),
+                    new(null, new("void"))),
                 new("""
                        internal static void SomeMethod(int firstParam, bool secondParam, int? thirdParam) =>
                           SomeMethod<bool, int?>(firstParam, secondParam, thirdParam);
@@ -94,7 +102,7 @@ public class MethodSourceCodeFactoryTest
                     .Create(methodToOverload);
 
             // Assert
-            methodSourceCode.Should().Be(expectedMethodSourceCode);
+            methodSourceCode.Should().BeEquivalentTo(expectedMethodSourceCode);
         }
     }
 }

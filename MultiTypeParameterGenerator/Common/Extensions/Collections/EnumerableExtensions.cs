@@ -4,6 +4,9 @@ namespace MultiTypeParameterGenerator.Common.Extensions.Collections;
 
 internal static class EnumerableExtensions
 {
+    internal static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action) =>
+        source.ToList().ForEach(action);
+
     internal static void ReplaceWhere<TSource>(
         this List<TSource> list, Predicate<TSource> predicate, TSource newValue)
     {
@@ -35,6 +38,14 @@ internal static class EnumerableExtensions
     internal static ImmutableHashSet<TResult> SelectToImmutableHashSet<T, TResult>(
         this IEnumerable<T> enumerable, Func<T, TResult> selector) =>
         enumerable.Select(selector).ToImmutableHashSet();
+
+    internal static IReadOnlyList<TSource> FilterUniqueBy<TSource, TKey>(
+        this IEnumerable<TSource> enumerable, Func<TSource, TKey> keySelector) =>
+        enumerable.GroupBy(keySelector).Where(g => g.Count() is 1).SelectToReadonlyList(g => g.Single());
+
+    internal static IReadOnlyList<TSource> ConcatDistinct<TSource>(
+        this IEnumerable<TSource> first, IEnumerable<TSource> second) =>
+        first.Concat(second).DistinctToReadonlyList();
 
     internal static IReadOnlyList<TSource> DistinctToReadonlyList<TSource>(this IEnumerable<TSource> enumerable) =>
         enumerable.Distinct().ToList();
