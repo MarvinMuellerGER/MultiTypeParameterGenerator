@@ -114,6 +114,16 @@ public partial interface ISomeClass<T> where T : struct
     private const string TestRecordName = $"{nameof(SomeClass<>)}.{nameof(SomeClass<>.SomeRecord)}?";
 
     // @formatter:off
+    /// <summary>
+    /// Test summary
+    /// </summary>
+    /// <param name="value1">Test param 1</param>
+    /// <param name="value2">Test param 2</param>
+    /// <param name="value3">Test param 3</param>
+    /// <typeparam name="T1">Test type param 1</typeparam>
+    /// <typeparam name="T2">Test type param 2</typeparam>
+    /// <typeparam name="T3">Test type param 3</typeparam>
+    /// <returns></returns>
     [AccessModifiers(Public)]
     protected (T1 value1, T2 value2, T3[] value3) SomeMethod<
         [AcceptedTypes<long, byte, char>(true, TestRecordName, nameof(SomeRecord))] T1,

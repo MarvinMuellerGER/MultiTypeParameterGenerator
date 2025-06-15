@@ -7,6 +7,8 @@ namespace MultiTypeParameterGenerator.Common.Models.Collections;
 internal sealed record GenericTypeCollection(params IReadOnlyList<GenericType> Values)
 {
     internal SourceCode SourceCode => new(Values.Any() ? $"<{Values.Join()}>" : string.Empty);
+    
+    internal SourceCode SourceCodeWithoutBrackets => new(Values.Join());
 
     internal SourceCode ConstraintsSourceCode =>
         new(Values.Select(genericType => genericType.ConstraintSourceCode).WhereNotNull().Join(string.Empty));

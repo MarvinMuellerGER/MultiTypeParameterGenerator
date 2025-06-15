@@ -34,10 +34,14 @@ internal class MethodSourceCodeFactory(
             .Select(combination => GetOverloadSourceCode(methodToOverload, combination));
     }
 
-    private SourceCode GetOverloadSourceCode(MethodToOverload methodToOverload,
-        AcceptedTypeCombination acceptedTypeCombination) =>
+    private SourceCode GetOverloadSourceCode(
+        MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
         new(
-            $"{Tab}{GetHeaderSourceCode(methodToOverload, acceptedTypeCombination)} =>{NewLine}{DoubleTab}{BodySourceCode(methodToOverload, acceptedTypeCombination)}");
+            $"{Tab}{GetSummaryComment(methodToOverload)}{NewLine}{Tab}{GetHeaderSourceCode(methodToOverload, acceptedTypeCombination)} =>{NewLine}{DoubleTab}{BodySourceCode(methodToOverload, acceptedTypeCombination)}");
+
+    private static SourceCode GetSummaryComment(MethodToOverload methodToOverload) =>
+        new(
+            $"/// <inheritdoc cref=\"{methodToOverload.Name}{{{GetOriginalTypeParametersSourceCodeWithoutBrackets(methodToOverload)}}}({GetParameterTypeNamesSourceCode(methodToOverload)})\" />");
 
     private SourceCode GetHeaderSourceCode(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
@@ -87,12 +91,18 @@ internal class MethodSourceCodeFactory(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
         GetTypeParameters(methodToOverload, acceptedTypeCombination).SourceCode;
 
+    private static SourceCode GetOriginalTypeParametersSourceCodeWithoutBrackets(MethodToOverload methodToOverload) =>
+        methodToOverload.GenericTypes.SourceCodeWithoutBrackets;
+
     private static GenericTypeCollection GetTypeParameters(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
         methodToOverload.GenericTypes.WithAcceptedTypes(acceptedTypeCombination);
 
     private static SourceCode GetParameterNamesSourceCode(MethodToOverload methodToOverload) =>
         methodToOverload.Parameters.NamesSourceCode;
+
+    private static SourceCode GetParameterTypeNamesSourceCode(MethodToOverload methodToOverload) =>
+        methodToOverload.Parameters.TypeNamesSourceCode;
 
     private static bool IsStaticModifierRequired(MethodToOverload methodToOverload) => methodToOverload is
         { GenerateExtensionMethod: true, MethodToOverloadIsStatic: false };
