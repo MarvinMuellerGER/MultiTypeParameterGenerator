@@ -79,17 +79,21 @@ public class MethodSourceCodeFactoryTest
                     new(null, new("SomeRecord")),
                     new(null, new("void"))),
                 new("""
+                       /// <inheritdoc cref="SomeMethod{T1, T2}(int, T1, T2)" />
                        internal static void SomeMethod(int firstParam, bool secondParam, int? thirdParam) =>
                           SomeMethod<bool, int?>(firstParam, secondParam, thirdParam);
 
+                       /// <inheritdoc cref="SomeMethod{T1, T2}(int, T1, T2)" />
                        internal static void SomeMethod<TSomeRecord>(int firstParam, bool secondParam, TSomeRecord thirdParam)
                           where TSomeRecord : SomeRecord =>
                           SomeMethod<bool, TSomeRecord>(firstParam, secondParam, thirdParam);
 
+                       /// <inheritdoc cref="SomeMethod{T1, T2}(int, T1, T2)" />
                        internal static void SomeMethod<TSomeRecord>(int firstParam, TSomeRecord secondParam, int? thirdParam)
                           where TSomeRecord : SomeRecord? =>
                           SomeMethod<TSomeRecord, int?>(firstParam, secondParam, thirdParam);
 
+                       /// <inheritdoc cref="SomeMethod{T1, T2}(int, T1, T2)" />
                        internal static void SomeMethod_WithSomeRecord_AndSomeRecord<TSomeRecord, TSomeRecord_2>(int firstParam, TSomeRecord secondParam, TSomeRecord_2 thirdParam)
                           where TSomeRecord : SomeRecord?
                           where TSomeRecord_2 : SomeRecord =>
