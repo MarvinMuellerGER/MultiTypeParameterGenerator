@@ -29,9 +29,7 @@ public sealed class AcceptedTypesAttribute<TCollection>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes) where TCollection : struct, IAcceptedTypesCollection
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -41,9 +39,7 @@ public sealed class AcceptedTypesAttribute<T1, T2>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -53,9 +49,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -65,9 +59,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -77,9 +69,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -89,9 +79,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -101,9 +89,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -113,9 +99,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -125,9 +109,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -137,9 +119,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -149,9 +129,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -161,9 +139,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -173,9 +149,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -185,9 +159,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -197,9 +169,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -209,9 +179,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -221,9 +189,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -234,9 +200,7 @@ public sealed class AcceptedTypesAttribute<
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -247,9 +211,7 @@ public sealed class AcceptedTypesAttribute<
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }
 
 /// <inheritdoc />
@@ -260,7 +222,5 @@ public sealed class AcceptedTypesAttribute<
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
     /// <inheritdoc />
-    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
-    {
-    }
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes) { }
 }

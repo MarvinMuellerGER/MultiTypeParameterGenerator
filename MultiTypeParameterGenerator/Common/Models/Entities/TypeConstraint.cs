@@ -13,9 +13,7 @@ internal sealed record TypeConstraint(
     bool HasUnmanagedTypeConstraint,
     bool HasConstructorConstraint)
 {
-    internal TypeConstraint(TypeName type) : this(new(type), false, false, false, false, false, false)
-    {
-    }
+    internal TypeConstraint(TypeName type) : this(new(type), false, false, false, false, false, false) { }
 
     internal SourceCode? SourceCode => Constraints.Any() ? new(Constraints.Join()) : null;
 
