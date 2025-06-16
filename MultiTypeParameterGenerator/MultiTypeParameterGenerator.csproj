@@ -7,7 +7,7 @@
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>Latest</LangVersion>
+        <LangVersion>preview</LangVersion>
         <Title>MultiTypeParameterGenerator</Title>
         <Authors>Marvin Müller</Authors>
         <Description>MultiTypeParameterGenerator is a C# source generator that automatically creates method variants with multiple types for a single parameter. This tool reduces boilerplate code by generating overloads for methods that need to work with different types. It's ideal for developers who want to provide a type-safe API with broad type support without manually writing numerous similar method implementations.</Description>

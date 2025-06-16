@@ -1,3 +1,5 @@
+// ReSharper disable UnusedMember.Global
+
 using JetBrains.Annotations;
 using static MultiTypeParameterGenerator.AccessModifier;
 
@@ -113,9 +115,8 @@ public partial interface ISomeClass<T> where T : struct
 {
     private const string TestRecordName = $"{nameof(SomeClass<>)}.{nameof(SomeClass<>.SomeRecord)}?";
 
-    // @formatter:off
     /// <summary>
-    /// Test summary
+    ///     Test summary
     /// </summary>
     /// <param name="value1">Test param 1</param>
     /// <param name="value2">Test param 2</param>
@@ -125,9 +126,10 @@ public partial interface ISomeClass<T> where T : struct
     /// <typeparam name="T3">Test type param 3</typeparam>
     /// <returns></returns>
     [AccessModifiers(Public)]
+    // @formatter:off
     protected (T1 value1, T2 value2, T3[] value3) SomeMethod<
         [AcceptedTypes<long, byte, char>(true, TestRecordName, nameof(SomeRecord))] T1,
-        T2, [AcceptedTypes<string, int, bool>(true, TestRecordName, nameof(SomeRecord))]
+        T2, [AcceptedTypes<AcceptedTypesForT3>(true, TestRecordName, nameof(SomeRecord))]
         T3>
         (T1 value1, T2 value2, T3[] value3) where T2 : class?, new();
     // @formatter:on

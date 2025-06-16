@@ -1,14 +1,8 @@
-// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedType.Global
 // ReSharper disable UnusedTypeParameter
 
 namespace MultiTypeParameterGenerator;
-
-/// <summary>
-///     A generic type placeholder structure used to represent a generic type parameter.
-/// </summary>
-/// <typeparam name="T">The type parameter that this structure represents.</typeparam>
-public struct GenericType<T>;
 
 /// <summary>
 ///     An Attribute that defines the accepted types for a generic parameter.
@@ -17,7 +11,7 @@ public struct GenericType<T>;
 /// </summary>
 /// <param name="asGenericTypes">
 ///     If true, the types will be treated as generic type parameters;
-///     if false, they will be treated as concrete types.
+///     if false, they will be treated as concrete types. (default: false)
 /// </param>
 /// <param name="additionalTypes">
 ///     Additional type names that should be included as accepted types,
@@ -25,10 +19,20 @@ public struct GenericType<T>;
 /// </param>
 [AttributeUsage(AttributeTargets.GenericParameter)]
 #pragma warning disable CS9113 // Parameter is unread.
-public abstract class AcceptedTypesAttribute(
-    bool asGenericTypes,
-    params string[] additionalTypes) : Attribute;
+public abstract class AcceptedTypesAttribute(bool asGenericTypes, params string[] additionalTypes) : Attribute;
 #pragma warning restore CS9113 // Parameter is unread.
+
+/// <inheritdoc />
+public sealed class AcceptedTypesAttribute<TCollection>(
+    bool asGenericTypes,
+    params string[] additionalTypes)
+    : AcceptedTypesAttribute(asGenericTypes, additionalTypes) where TCollection : struct, IAcceptedTypesCollection
+{
+    /// <inheritdoc />
+    public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
+    {
+    }
+}
 
 /// <inheritdoc />
 public sealed class AcceptedTypesAttribute<T1, T2>(
@@ -36,14 +40,7 @@ public sealed class AcceptedTypesAttribute<T1, T2>(
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="AcceptedTypesAttribute" /> class
-    ///     with the specified additional types and asGenericTypes set to false.
-    /// </summary>
-    /// <param name="additionalTypes">
-    ///     Additional type names that should be included as accepted types,
-    ///     specified as fully qualified type names.
-    /// </param>
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -55,7 +52,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3>(
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -67,7 +64,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4>(
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -79,7 +76,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5>(
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -91,7 +88,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6>(
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -103,7 +100,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7>(
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -115,7 +112,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8>(
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -127,7 +124,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -139,7 +136,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -151,7 +148,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -163,7 +160,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -175,7 +172,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -187,7 +184,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -199,7 +196,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -211,7 +208,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -223,7 +220,7 @@ public sealed class AcceptedTypesAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -236,7 +233,7 @@ public sealed class AcceptedTypesAttribute<
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -249,7 +246,7 @@ public sealed class AcceptedTypesAttribute<
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }
@@ -262,7 +259,7 @@ public sealed class AcceptedTypesAttribute<
     params string[] additionalTypes)
     : AcceptedTypesAttribute(asGenericTypes, additionalTypes)
 {
-    /// <inheritdoc cref="AcceptedTypesAttribute{T1, T2}(string[])" />
+    /// <inheritdoc />
     public AcceptedTypesAttribute(params string[] additionalTypes) : this(false, additionalTypes)
     {
     }

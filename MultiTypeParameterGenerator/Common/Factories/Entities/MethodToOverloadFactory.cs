@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using MultiTypeParameterGenerator.Analysis.Extensions.Enums;
 using MultiTypeParameterGenerator.Analysis.Models.Collections;
@@ -131,7 +130,12 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
         var acceptedTypesAttribute = type.GetAttributes()
             .SingleOrDefault(a => a.AttributeClass?.Name is nameof(AcceptedTypesAttribute));
 
-        var types = acceptedTypesAttribute?.AttributeClass?.TypeArguments ?? [];
+        var types = (acceptedTypesAttribute?.AttributeClass?.TypeArguments ?? []).ToList();
+
+        var acceptedTypeCollections = types.WhereToReadonlyList(IsAcceptedTypeCollection);
+        var typesFromCollections = acceptedTypeCollections.SelectMany(t => GetTypeArguments(t));
+        types.RemoveAll(acceptedTypeCollections);
+        types.AddRange(typesFromCollections);
 
         var shortConstructor = acceptedTypesAttribute?.ConstructorArguments.Length is 1;
         var asGenericTypes =
@@ -143,7 +147,7 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
             .Select(typeName => GetTypeSymbolByName(type.ContainingType, typeName))
             .WhereNotNull();
 
-        return new(types.Select(t => new TypeInformation(t, false)).Concat(additionalTypes).ToImmutableArray(),
+        return new([..types.Select(t => new TypeInformation(t, false)).Concat(additionalTypes)],
             asGenericTypes);
     }
 
@@ -208,15 +212,19 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
         if (IsGenericType(type))
         {
             asGenericType = true;
-            type = ((INamedTypeSymbol)type).TypeArguments[0];
+            type = GetTypeArguments(type)[0];
         }
 
         return new(GetFullTypeName(type), typeInformation.IsNullable,
             asGenericType && type is { IsReferenceType: true, IsSealed: false });
     }
 
+    private static bool IsAcceptedTypeCollection(ITypeSymbol type) =>
+        type.ContainingNamespace.Name == typeof(AcceptedTypesCollection<,>).Namespace &&
+        type.Name is nameof(AcceptedTypesCollection<,>);
+
     private static bool IsGenericType(ITypeSymbol type) =>
-        Regex.IsMatch(type.ToString(), @"MultiTypeParameterGenerator\.GenericType<([\w\.]+)>");
+        type.ContainingNamespace.Name == typeof(GenericType).Namespace && type.Name is nameof(GenericType);
 
     private static ParameterCollection GetParameters(IMethodSymbol method) => new(
         method.Parameters.SelectToReadonlyList(p => new Parameter(GetFullTypeName(p.Type), new(p.Name))));
@@ -240,6 +248,9 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
         new(type.ToString().Remove($"{@namespace?.Value}."));
 
     private static TypeName GetTypeName(ITypeSymbol type) => new(type.Name);
+
+    private static ImmutableArray<ITypeSymbol> GetTypeArguments(ITypeSymbol typeSymbol) =>
+        ((INamedTypeSymbol)typeSymbol).TypeArguments;
 
     private sealed record TypeInformation(ITypeSymbol Type, bool IsNullable);
 

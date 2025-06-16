@@ -16,6 +16,9 @@ internal static class EnumerableExtensions
         list[index] = newValue;
     }
 
+    internal static void RemoveAll<TSource>(this List<TSource> source, IEnumerable<TSource> itemsToRemove) =>
+        itemsToRemove.ForEach(i => source.Remove(i));
+
     internal static IReadOnlyList<TSource> WhereNotNull<TSource>(this IEnumerable<TSource?> enumerable) =>
         enumerable.Where(i => i is not null).ToList()!;
 
