@@ -6,7 +6,7 @@ using Pure.DI;
 
 namespace MultiTypeParameterGenerator;
 
-internal partial class Composition
+internal sealed partial class Composition
 {
     internal static Composition Instance { get; } = new();
 

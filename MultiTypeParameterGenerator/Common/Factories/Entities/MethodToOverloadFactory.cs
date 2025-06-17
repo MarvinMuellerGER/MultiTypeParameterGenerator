@@ -15,7 +15,7 @@ using TypeName = MultiTypeParameterGenerator.Common.Models.TypedValues.TypeName;
 
 namespace MultiTypeParameterGenerator.Common.Factories.Entities;
 
-internal class MethodToOverloadFactory : IMethodToOverloadFactory
+internal sealed class MethodToOverloadFactory : IMethodToOverloadFactory
 {
     public MethodToOverload? Create(IMethodSymbol method)
     {

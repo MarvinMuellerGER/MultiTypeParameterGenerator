@@ -3,7 +3,7 @@ using MultiTypeParameterGenerator.Common.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Analysis.Factories.Collections;
 
-internal class ParameterCollectionFactory : IParameterCollectionFactory
+internal sealed class ParameterCollectionFactory : IParameterCollectionFactory
 {
     public ParameterCollection Create(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>

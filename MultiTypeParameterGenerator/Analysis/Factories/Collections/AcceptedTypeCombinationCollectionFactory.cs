@@ -8,7 +8,7 @@ namespace MultiTypeParameterGenerator.Analysis.Factories.Collections;
 
 using Key = (GenericType AffectedGenericType, int OtherAcceptedTypesHashCode);
 
-internal class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCombinationCollectionFactory
+internal sealed class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCombinationCollectionFactory
 {
     public AcceptedTypeCombinationCollection Create(MethodToOverload methodToOverload)
     {

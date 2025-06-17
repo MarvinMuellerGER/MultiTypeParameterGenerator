@@ -7,7 +7,7 @@ using MultiTypeParameterGenerator.Common.Utils;
 namespace MultiTypeParameterGenerator;
 
 [Generator]
-internal class Generator : IIncrementalGenerator
+internal sealed class Generator : IIncrementalGenerator
 {
     private static readonly IList<IMethodSymbol> ProcessedMethods = new List<IMethodSymbol>();
 

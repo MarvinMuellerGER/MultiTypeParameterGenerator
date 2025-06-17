@@ -10,7 +10,7 @@ using static MultiTypeParameterGenerator.Common.Extensions.Collections.Enumerabl
 
 namespace MultiTypeParameterGenerator.Common.Factories.Entities;
 
-internal class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourceCodeFactory) : ISourceCodeFileFactory
+internal sealed class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourceCodeFactory) : ISourceCodeFileFactory
 {
     private static readonly Dictionary<FileName, int> CountByFileName = [];
 

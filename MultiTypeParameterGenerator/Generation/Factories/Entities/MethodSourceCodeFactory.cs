@@ -10,7 +10,7 @@ using static MultiTypeParameterGenerator.Common.Utils.Constants;
 
 namespace MultiTypeParameterGenerator.Generation.Factories.Entities;
 
-internal class MethodSourceCodeFactory(
+internal sealed class MethodSourceCodeFactory(
     IAcceptedTypeCombinationCollectionFactory acceptedTypeCombinationCollectionFactory,
     IParameterCollectionFactory parameterCollectionFactory) : IMethodSourceCodeFactory
 {
