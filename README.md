@@ -25,7 +25,7 @@ Or add it directly to your `.csproj` file:
 
 ``` xml
 <ItemGroup>
-    <PackageReference Include="MultiTypeParameterGenerator" Version="1.0.0" />
+    <PackageReference Include="MultiTypeParameterGenerator" Version="1.1.0" />
 </ItemGroup>
 ```
 
@@ -33,17 +33,17 @@ Or add it directly to your `.csproj` file:
 
 ### Basic Example
 
-Add an `[AccessModifiers]` to your method and an `[AcceptedTypes]` attribute to your generic type parameter:
+Add an `[AccessModifiers]` attribute to your method and an `[AcceptedTypes]` attribute to your generic type parameter:
 
 ``` csharp
 using MultiTypeParameterGenerator;
 
 public partial class Calculator
 {
-    [AccessModifiers(Public)] private T2 Add<T1, [AcceptedTypes<int, double>] T2>(T1 first, T2 second)
+    [AccessModifiers(Public)] private T Add<int, [AcceptedTypes<int, double>] T>(int first, T second)
     {
         // Implementation
-        return second;
+        return first + second;
     }
 }
 ```
@@ -54,9 +54,9 @@ The generator will create method overloads for each specified type:
 // Generated code
 partial class Calculator
 {
-    public int Add<T1>(T1 first, int value) => Add<T>(first, second);
+    public int Add(int first, int value) => Add<int>(first, second);
     
-    public double Add<T1>(T1 first, double value) => Add<T>(first, second);
+    public double Add(int first, double value) => Add<double>(first, second);
 }
 ```
 
@@ -75,6 +75,39 @@ public void Plot<[AcceptedTypes<int, double>] T1, [AcceptedTypes<int, double>] T
 // public void Plot(int x, double y);
 // public void Plot(double x, int y);
 // public void Plot(double x, double y);
+```
+
+### XML documentation comments
+
+If you add summary comments they will not get lost:
+
+``` csharp
+/// <summary>
+///     Calculates sum of two values
+/// </summary>
+/// <param name="first">First summand</param>
+/// <param name="second">Second summand</param>
+/// <typeparam name="T1">Type of first summand</typeparam>
+/// <typeparam name="T2">Type of second summand</typeparam>
+/// <returns>sum of both values</returns>
+private T Add<int, [AcceptedTypes<int, double>] T>(int first, T second)
+{
+    // Implementation
+    return first + second;
+}
+
+The generated code will contain inhertdoc comments:
+
+``` csharp
+// Generated code
+partial class Calculator
+{
+    /// <inheritdoc cref="Add{T}(int, T)" />
+    public int Add(int first, int value) => Add<int>(first, second);
+
+    /// <inheritdoc cref="Add{T}(int, T)" />
+    public double Add(int first, double value) => Add<double>(first, second);
+}
 ```
 
 ### Advanced Usage
