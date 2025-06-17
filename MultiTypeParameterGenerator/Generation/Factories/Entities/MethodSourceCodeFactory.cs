@@ -37,11 +37,11 @@ internal sealed class MethodSourceCodeFactory(
     private SourceCode GetOverloadSourceCode(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
         new(
-            $"{Tab}{GetSummaryComment(methodToOverload)}{NewLine}{Tab}{GetHeaderSourceCode(methodToOverload, acceptedTypeCombination)} =>{NewLine}{DoubleTab}{BodySourceCode(methodToOverload, acceptedTypeCombination)}");
+            $"{Tab}{GetXmlDocumentationComment(methodToOverload)}{NewLine}{Tab}{GetHeaderSourceCode(methodToOverload, acceptedTypeCombination)} =>{NewLine}{DoubleTab}{BodySourceCode(methodToOverload, acceptedTypeCombination)}");
 
-    private static SourceCode GetSummaryComment(MethodToOverload methodToOverload) =>
+    private static SourceCode GetXmlDocumentationComment(MethodToOverload methodToOverload) =>
         new(
-            $"/// <inheritdoc cref=\"{methodToOverload.Name}{{{GetOriginalTypeParametersSourceCodeWithoutBrackets(methodToOverload)}}}({GetParameterTypeNamesSourceCode(methodToOverload)})\" />");
+            $"/// <inheritdoc cref=\"{methodToOverload.Name}{{{GetOriginalTypeParametersSourceCodeWithoutBrackets(methodToOverload)}}}({GetParameterTypeNamesSourceCodeWithBraces(methodToOverload)})\" />");
 
     private SourceCode GetHeaderSourceCode(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
@@ -101,8 +101,8 @@ internal sealed class MethodSourceCodeFactory(
     private static SourceCode GetParameterNamesSourceCode(MethodToOverload methodToOverload) =>
         methodToOverload.Parameters.NamesSourceCode;
 
-    private static SourceCode GetParameterTypeNamesSourceCode(MethodToOverload methodToOverload) =>
-        methodToOverload.Parameters.TypeNamesSourceCode;
+    private static SourceCode GetParameterTypeNamesSourceCodeWithBraces(MethodToOverload methodToOverload) =>
+        new(methodToOverload.Parameters.TypeNamesSourceCode.Value.Replace('<', '{').Replace('>', '}'));
 
     private static bool IsStaticModifierRequired(MethodToOverload methodToOverload) => methodToOverload is
         { GenerateExtensionMethod: true, MethodToOverloadIsStatic: false };
