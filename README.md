@@ -95,6 +95,7 @@ private T Add<int, [AcceptedTypes<int, double>] T>(int first, T second)
     // Implementation
     return first + second;
 }
+```
 
 The generated code will contain inhertdoc comments:
 
