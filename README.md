@@ -97,7 +97,7 @@ private T Add<int, [AcceptedTypes<int, double>] T>(int first, T second)
 }
 ```
 
-The generated code will contain inhertdoc comments:
+The generated code will contain inheritdoc comments:
 
 ``` csharp
 // Generated code
