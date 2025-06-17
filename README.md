@@ -25,7 +25,7 @@ Or add it directly to your `.csproj` file:
 
 ``` xml
 <ItemGroup>
-    <PackageReference Include="MultiTypeParameterGenerator" Version="1.1.0" />
+    <PackageReference Include="MultiTypeParameterGenerator" />
 </ItemGroup>
 ```
 
