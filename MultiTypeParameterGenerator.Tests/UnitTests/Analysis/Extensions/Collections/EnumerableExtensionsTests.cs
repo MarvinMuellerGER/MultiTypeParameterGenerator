@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Analysis.Extensions.Collections;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Analysis.Extensions.Collections;
 
-public class EnumerableExtensionsTests
+public static class EnumerableExtensionsTests
 {
-    public class GetCombinations
+    public sealed class GetCombinations
     {
         [Fact]
-        public void Should_ReturnAllCombinations()
+        public void ReturnsAllCombinations()
         {
             // Arrange
             var lists = new List<IReadOnlyList<int>>

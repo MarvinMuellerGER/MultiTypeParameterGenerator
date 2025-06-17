@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Common.Models.Collections;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Models.Collections;
 
-public class AttributeDefinitionCollectionTest
+public static class AttributeDefinitionCollectionTest
 {
-    public class SourceCodeFiles
+    public sealed class SourceCodeFiles
     {
         [Fact]
-        public void Should_ContainAllSourceCodeFilesFromAttributeDefinitions()
+        public void ContainsAllSourceCodeFilesFromAttributeDefinitions()
         {
             // Arrange
             var collection = new AttributeDefinitionCollection(new(

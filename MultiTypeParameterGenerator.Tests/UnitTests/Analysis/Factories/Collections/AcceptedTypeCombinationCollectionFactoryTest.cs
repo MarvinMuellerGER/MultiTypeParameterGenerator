@@ -4,12 +4,12 @@ using MultiTypeParameterGenerator.Common.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Analysis.Factories.Collections;
 
-public class AcceptedTypeCombinationCollectionFactoryTest
+public static class AcceptedTypeCombinationCollectionFactoryTest
 {
-    public class Create
+    public sealed class Create
     {
         [Fact]
-        public void Should_ReturnAllAcceptedTypeCombinations()
+        public void ReturnsAllAcceptedTypeCombinations()
         {
             // Arrange
             var acceptedTypesForAffectedGenericTypeCollection = new AcceptedTypesForAffectedGenericTypeCollection(

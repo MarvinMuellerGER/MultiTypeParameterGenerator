@@ -2,7 +2,7 @@ using MultiTypeParameterGenerator.Common.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Models.Entities;
 
-public class MethodToOverloadTest
+public static class MethodToOverloadTest
 {
     private static readonly MethodToOverload MethodToOverload = new(
         false,
@@ -15,17 +15,17 @@ public class MethodToOverloadTest
         new(),
         new([new(new(null, new("int")), new("x"))]));
 
-    public class MethodToOverloadIsStatic
+    public sealed class MethodToOverloadIsStatic
     {
         [Fact]
-        public void Should_BeFalse_WhenAccessModifiersDontContainStatic()
+        public void IsFalse_WhenAccessModifiersDontContainStatic()
         {
             // Act & Assert
             MethodToOverload.MethodToOverloadIsStatic.Should().BeFalse();
         }
 
         [Fact]
-        public void Should_BeTrue_WhenAccessModifiersContainStatic()
+        public void IsTrue_WhenAccessModifiersContainStatic()
         {
             // Arrange
             var method = MethodToOverload with { AccessModifiers = new(new("public"), new("static")) };

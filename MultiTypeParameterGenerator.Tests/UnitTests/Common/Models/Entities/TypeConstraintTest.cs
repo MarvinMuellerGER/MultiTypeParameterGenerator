@@ -3,12 +3,12 @@ using MultiTypeParameterGenerator.Common.Models.TypedValues;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Models.Entities;
 
-public class TypeConstraintTest
+public static class TypeConstraintTest
 {
-    public class SourceCodeProperty
+    public sealed class SourceCodeProperty
     {
         [Fact]
-        public void Should_ReturnNull_WhenNoConstraints()
+        public void ReturnsNull_WhenNoConstraints()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), false, false, false, false, false, false);
@@ -18,7 +18,7 @@ public class TypeConstraintTest
         }
 
         [Fact]
-        public void Should_ReturnSourceCode_WhenHasValueTypeConstraint()
+        public void ReturnsSourceCode_WhenHasValueTypeConstraint()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), true, false, false, false, false, false);
@@ -29,7 +29,7 @@ public class TypeConstraintTest
         }
 
         [Fact]
-        public void Should_ReturnSourceCode_WhenHasReferenceTypeConstraint()
+        public void ReturnsSourceCode_WhenHasReferenceTypeConstraint()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), false, true, false, false, false, false);
@@ -40,7 +40,7 @@ public class TypeConstraintTest
         }
 
         [Fact]
-        public void Should_ReturnSourceCode_WhenHasNullableReferenceTypeConstraint()
+        public void ReturnsSourceCode_WhenHasNullableReferenceTypeConstraint()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), false, true, true, false, false, false);
@@ -51,7 +51,7 @@ public class TypeConstraintTest
         }
 
         [Fact]
-        public void Should_ReturnSourceCode_WhenHasNotNullConstraint()
+        public void ReturnsSourceCode_WhenHasNotNullConstraint()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), false, false, false, true, false, false);
@@ -62,7 +62,7 @@ public class TypeConstraintTest
         }
 
         [Fact]
-        public void Should_ReturnSourceCode_WhenHasUnmanagedTypeConstraint()
+        public void ReturnsSourceCode_WhenHasUnmanagedTypeConstraint()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), false, false, false, false, true, false);
@@ -73,7 +73,7 @@ public class TypeConstraintTest
         }
 
         [Fact]
-        public void Should_ReturnSourceCode_WhenHasConstructorConstraint()
+        public void ReturnsSourceCode_WhenHasConstructorConstraint()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), false, false, false, false, false, true);
@@ -84,7 +84,7 @@ public class TypeConstraintTest
         }
 
         [Fact]
-        public void Should_ReturnSourceCode_WhenHasTypesConstraint()
+        public void ReturnsSourceCode_WhenHasTypesConstraint()
         {
             // Arrange
             var constraint = new TypeConstraint(new(new("IComparable"), new("IEnumerable")), false, false, false, false,
@@ -96,7 +96,7 @@ public class TypeConstraintTest
         }
 
         [Fact]
-        public void Should_CombineConstraintsInCorrectOrder_WhenMultipleConstraintsExist()
+        public void CombinesConstraintsInCorrectOrder_WhenMultipleConstraintsExist()
         {
             // Arrange
             var constraint =

@@ -3,12 +3,12 @@ using MultiTypeParameterGenerator.Common.Extensions.Collections;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Extensions.Collections;
 
-public class EnumerableExtensionsTest
+public static class EnumerableExtensionsTest
 {
-    public class WhereNotNull
+    public sealed class WhereNotNull
     {
         [Fact]
-        public void Should_ReturnAllItemsThatAreNotNull()
+        public void ReturnsAllItemsThatAreNotNull()
         {
             // Arrange
             int?[] data = [null, 2, null, null, 5];
@@ -22,10 +22,10 @@ public class EnumerableExtensionsTest
         }
     }
 
-    public class WhereToReadonly
+    public sealed class WhereToReadonly
     {
         [Fact]
-        public void Should_FilterItemsCorrectly()
+        public void FiltersItemsCorrectly()
         {
             // Arrange
             var data = new[] { 1, 2, 3, 4, 5 };
@@ -39,7 +39,7 @@ public class EnumerableExtensionsTest
         }
 
         [Fact]
-        public void Should_ReturnReadOnlyList()
+        public void ReturnsReadOnlyList()
         {
             // Arrange
             var data = Enumerable.Empty<bool>();
@@ -52,10 +52,10 @@ public class EnumerableExtensionsTest
         }
     }
 
-    public class SelectToReadonlyList
+    public sealed class SelectToReadonlyList
     {
         [Fact]
-        public void Should_SelectAndReturnReadonlyList()
+        public void SelectsAndReturnsReadonlyList()
         {
             // Arrange
             var original = new[] { 1, 2, 3 };
@@ -69,10 +69,10 @@ public class EnumerableExtensionsTest
         }
     }
 
-    public class SelectManyToReadonlyList
+    public sealed class SelectManyToReadonlyList
     {
         [Fact]
-        public void Should_SelectAndReturnReadonlyList()
+        public void SelectsAndReturnsReadonlyList()
         {
             // Arrange
             var original = new[] { 1, 2, 3 };
@@ -86,10 +86,10 @@ public class EnumerableExtensionsTest
         }
     }
 
-    public class SelectToImmutableHashSet
+    public sealed class SelectToImmutableHashSet
     {
         [Fact]
-        public void Should_SelectAndReturnImmutableHashSe()
+        public void SelectsAndReturnsImmutableHashSe()
         {
             // Arrange
             var original = new[] { "a", "b", "b" };
@@ -103,10 +103,10 @@ public class EnumerableExtensionsTest
         }
     }
 
-    public class Join
+    public sealed class Join
     {
         [Fact]
-        public void Should_CombineToStringOutputsOfElementsIntoString()
+        public void CombinesToStringOutputsOfElementsIntoString()
         {
             // Arrange
             var values = new[] { "one", "two", "three" };
@@ -116,7 +116,7 @@ public class EnumerableExtensionsTest
         }
 
         [Fact]
-        public void Should_UseCommaFollowedByWhitespaceAsDefaultSeparator()
+        public void UsesCommaFollowedByWhitespaceAsDefaultSeparator()
         {
             // Arrange
             var values = new[] { "one", "two", "three" };

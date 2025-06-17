@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Analysis.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Analysis.Models.Entities;
 
-public class AcceptedTypeTest
+public static class AcceptedTypeTest
 {
-    public class ShortName
+    public sealed class ShortName
     {
         [Fact]
-        public void Should_ReturnShortNameOfAcceptedTypeName()
+        public void ReturnsShortNameOfAcceptedTypeName()
         {
             // Arrange
             var acceptedType = new AcceptedType(new(new("SomeNamespace"), new("SomeClass")), false, false);
@@ -17,10 +17,10 @@ public class AcceptedTypeTest
         }
     }
 
-    public class NameInclNullableAnnotation
+    public sealed class NameInclNullableAnnotation
     {
         [Fact]
-        public void Should_ReturnFullName_WhenIsNullableIsFalse()
+        public void ReturnsFullName_WhenIsNullableIsFalse()
         {
             // Arrange
             var acceptedType = new AcceptedType(new(new("SomeNamespace"), new("SomeClass")), false, false);
@@ -30,7 +30,7 @@ public class AcceptedTypeTest
         }
 
         [Fact]
-        public void Should_ReturnFullNameFollowedByAQuestionMark_WhenIsNullableIsTrue()
+        public void ReturnsFullNameFollowedByAQuestionMark_WhenIsNullableIsTrue()
         {
             // Arrange
             var acceptedType = new AcceptedType(new(new("SomeNamespace"), new("SomeClass")), true, false);
@@ -41,10 +41,10 @@ public class AcceptedTypeTest
         }
     }
 
-    public class NameForMethodName
+    public sealed class NameForMethodName
     {
         [Fact]
-        public void Should_ReturnShortName_WhenIndexOfAcceptedTypesWithSameShortNameIsBelowThanOne()
+        public void ReturnsShortName_WhenIndexOfAcceptedTypesWithSameShortNameIsBelowThanOne()
         {
             // Arrange
             var acceptedType = new AcceptedType(new(new("SomeNamespace"), new("SomeClass")), false, false);
@@ -54,7 +54,7 @@ public class AcceptedTypeTest
         }
 
         [Fact]
-        public void Should_ReturnShortNameFollowedByIndexOfAcceptedTypesWithSameShortName_WhenItIsAboveThanZero()
+        public void ReturnsShortNameFollowedByIndexOfAcceptedTypesWithSameShortName_WhenItIsAboveThanZero()
         {
             // Arrange
             var acceptedType = new AcceptedType(new(new("SomeNamespace"), new("SomeClass")), false, false, 2);
@@ -64,10 +64,10 @@ public class AcceptedTypeTest
         }
     }
 
-    public class TypeNameForSourceCode
+    public sealed class TypeNameForSourceCode
     {
         [Fact]
-        public void Should_ReturnTypeName_WhenUseTypeConstraintIsFalse()
+        public void ReturnsTypeName_WhenUseTypeConstraintIsFalse()
         {
             // Arrange
             var acceptedType = new AcceptedType(new(new("SomeNamespace"), new("SomeClass")), false, false);
@@ -77,7 +77,7 @@ public class AcceptedTypeTest
         }
 
         [Fact]
-        public void Should_ReturnGenericTypeOfShortName_WhenUseTypeConstraintIsTrue()
+        public void ReturnsGenericTypeOfShortName_WhenUseTypeConstraintIsTrue()
         {
             // Arrange
             var acceptedType = new AcceptedType(new(new("SomeNamespace"), new("SomeClass")), false, true);
@@ -87,7 +87,7 @@ public class AcceptedTypeTest
         }
 
         [Fact]
-        public void Should_ReturnGenericTypeOfShortNameIncludingNumber_WhenItsNotTheFirstOfThisType()
+        public void ReturnsGenericTypeOfShortNameIncludingNumber_WhenItsNotTheFirstOfThisType()
         {
             // Arrange
             var acceptedType = new AcceptedType(new(new("SomeNamespace"), new("SomeClass")), false, true,

@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Analysis.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Analysis.Models.Entities;
 
-public class ParameterTest
+public static class ParameterTest
 {
-    public class SourceCodeProperty
+    public sealed class SourceCodeProperty
     {
         [Fact]
-        public void Should_ReturnTypeFollowedByName()
+        public void ReturnsTypeFollowedByName()
         {
             // Arrange
             var parameter = new Parameter(new(null, new("int")), new("myParam"));
@@ -17,7 +17,7 @@ public class ParameterTest
         }
 
         [Fact]
-        public void Should_UseTypeNameForSourceCode()
+        public void UsesTypeNameForSourceCode()
         {
             // Arrange
             var parameter = new Parameter(new(null, new("int")), new("myParam")) { TypeNameForSourceCode = new("T1") };

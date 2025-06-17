@@ -7,12 +7,12 @@ using NSubstitute;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Generation.Factories.Entities;
 
-public class MethodSourceCodeFactoryTest
+public static class MethodSourceCodeFactoryTest
 {
-    public class Create
+    public sealed class Create
     {
         [Fact]
-        public void Should_GenerateMethodSourceCodeFromMethodToOverload()
+        public void GeneratesMethodSourceCodeFromMethodToOverload()
         {
             // Arrange
             var methodToOverload = new MethodToOverload(

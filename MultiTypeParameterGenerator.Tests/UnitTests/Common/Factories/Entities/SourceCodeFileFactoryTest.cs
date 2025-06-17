@@ -6,12 +6,12 @@ using NSubstitute;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Factories.Entities;
 
-public class SourceCodeFileFactoryTest
+public static class SourceCodeFileFactoryTest
 {
-    public class Create
+    public sealed class Create
     {
         [Fact]
-        public void Should_CreateSourceCodeFileFromMethodSourceCodesOfType()
+        public void CreatesSourceCodeFileFromMethodSourceCodesOfType()
         {
             // Arrange
             const string expectedSourceCode =

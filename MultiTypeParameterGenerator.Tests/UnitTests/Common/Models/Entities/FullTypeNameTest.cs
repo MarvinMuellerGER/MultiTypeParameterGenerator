@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Common.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Models.Entities;
 
-public class FullTypeNameTest
+public static class FullTypeNameTest
 {
-    public class ValueProperty
+    public sealed class ValueProperty
     {
         [Fact]
-        public void Should_CombineNamespaceAndTypeName()
+        public void CombinesNamespaceAndTypeName()
         {
             // Arrange
             var fullTypeName = new FullTypeName(new("SomeNamespace"), new("SomeClass"));

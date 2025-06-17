@@ -1,6 +1,6 @@
 namespace MultiTypeParameterGenerator.Tests;
 
-public class VerifyChecksTests
+public sealed class VerifyChecksTests
 {
     [Fact]
     public Task Run() =>

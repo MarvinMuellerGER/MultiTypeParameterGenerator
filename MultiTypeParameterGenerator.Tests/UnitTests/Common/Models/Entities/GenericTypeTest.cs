@@ -4,12 +4,12 @@ using MultiTypeParameterGenerator.Common.Models.TypedValues;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Models.Entities;
 
-public class GenericTypeTest
+public static class GenericTypeTest
 {
-    public class CreateFromAcceptedTypeName
+    public sealed class CreateFromAcceptedTypeName
     {
         [Fact]
-        public void Should_CreateGenericTypeNameWithSameValue()
+        public void CreatesGenericTypeNameWithSameValue()
         {
             // Arrange
             var accepted = new AcceptedType(new(null, new("AcceptedValue")), false, false);
@@ -19,10 +19,10 @@ public class GenericTypeTest
         }
     }
 
-    public class ConstraintSourceCodeProperty
+    public sealed class ConstraintSourceCodeProperty
     {
         [Fact]
-        public void Should_ReturnNull_When_ConstraintIsNull()
+        public void ReturnsNull_When_ConstraintIsNull()
         {
             // Arrange
             var genericType = new GenericType(new("T"));
@@ -32,7 +32,7 @@ public class GenericTypeTest
         }
 
         [Fact]
-        public void Should_ReturnNull_When_ConstraintSourceCodeIsNull()
+        public void ReturnsNull_When_ConstraintSourceCodeIsNull()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), false, false, false, false, false, false);
@@ -43,7 +43,7 @@ public class GenericTypeTest
         }
 
         [Fact]
-        public void Should_ReturnFormattedConstraint_When_ConstraintSourceCodeIsNotNull()
+        public void ReturnsFormattedConstraint_When_ConstraintSourceCodeIsNotNull()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), true, false, false, false, false, false);
@@ -59,7 +59,7 @@ public class GenericTypeTest
         }
 
         [Fact]
-        public void Should_IncludeMultipleConstraints_When_ConstraintHasMultipleValues()
+        public void IncludesMultipleConstraints_When_ConstraintHasMultipleValues()
         {
             // Arrange
             var constraint =

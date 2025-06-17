@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Analysis.Extensions.Collections;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Analysis.Extensions.Collections;
 
-public class DictionaryExtensions
+public static class DictionaryExtensions
 {
-    public class GetCombinations
+    public sealed class GetCombinations
     {
         [Fact]
-        public void Should_ReturnAllPossibleCombinationsOnce()
+        public void ReturnsAllPossibleCombinationsOnce()
         {
             // Arrange
             var testData = new Dictionary<string, IReadOnlyList<string>>

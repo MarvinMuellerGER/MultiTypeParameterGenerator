@@ -4,12 +4,12 @@ using MultiTypeParameterGenerator.Common.Models.TypedValues;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Models.Collections;
 
-public class GenericTypeCollectionTest
+public static class GenericTypeCollectionTest
 {
-    public class SourceCode
+    public sealed class SourceCode
     {
         [Fact]
-        public void Should_ContainGenericTypeNamesSeparatedByComma()
+        public void ContainsGenericTypeNamesSeparatedByComma()
         {
             // Arrange
             var collection = new GenericTypeCollection(new(new("T1")), new(new("T2")));
@@ -19,10 +19,10 @@ public class GenericTypeCollectionTest
         }
     }
 
-    public class ExceptAcceptedTypes
+    public sealed class ExceptAcceptedTypes
     {
         [Fact]
-        public void Should_ExcludeAffectedTypeNames()
+        public void ExcludesAffectedTypeNames()
         {
             // Arrange
             var collection = new GenericTypeCollection(new(new("T1")), new(new("T2")));
@@ -39,10 +39,10 @@ public class GenericTypeCollectionTest
         }
     }
 
-    public class ConstraintsSourceCode
+    public sealed class ConstraintsSourceCode
     {
         [Fact]
-        public void Should_ReturnEmptySourceCode_When_EmptyCollection()
+        public void ReturnsEmptySourceCode_When_EmptyCollection()
         {
             // Arrange
             var collection = new GenericTypeCollection();
@@ -52,7 +52,7 @@ public class GenericTypeCollectionTest
         }
 
         [Fact]
-        public void Should_ReturnEmptySourceCode_When_NoGenericTypesHaveConstraints()
+        public void ReturnsEmptySourceCode_When_NoGenericTypesHaveConstraints()
         {
             // Arrange
             var collection = new GenericTypeCollection(
@@ -65,7 +65,7 @@ public class GenericTypeCollectionTest
         }
 
         [Fact]
-        public void Should_CombineConstraints_When_SingleGenericTypeHasConstraint()
+        public void CombinesConstraints_When_SingleGenericTypeHasConstraint()
         {
             // Arrange
             var constraint = new TypeConstraint(new(), true, false, false, false, false, false);
@@ -83,7 +83,7 @@ public class GenericTypeCollectionTest
         }
 
         [Fact]
-        public void Should_CombineConstraints_When_MultipleGenericTypesHaveConstraints()
+        public void CombinesConstraints_When_MultipleGenericTypesHaveConstraints()
         {
             // Arrange
             var constraint1 = new TypeConstraint(new(), true, false, false, false, false, false);

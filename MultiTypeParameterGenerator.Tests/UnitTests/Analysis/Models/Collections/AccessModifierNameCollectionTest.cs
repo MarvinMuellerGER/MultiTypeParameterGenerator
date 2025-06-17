@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Analysis.Models.Collections;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Analysis.Models.Collections;
 
-public class AccessModifierNameCollectionTest
+public static class AccessModifierNameCollectionTest
 {
-    public class IsEmpty
+    public sealed class IsEmpty
     {
         [Fact]
-        public void Should_ReturnTrue_WhenCollectionIsEmpty()
+        public void ReturnsTrue_WhenCollectionIsEmpty()
         {
             // Arrange
             var collection = new AccessModifierNameCollection();
@@ -17,7 +17,7 @@ public class AccessModifierNameCollectionTest
         }
 
         [Fact]
-        public void Should_ReturnFalse_WhenCollectionIsNotEmpty()
+        public void ReturnsFalse_WhenCollectionIsNotEmpty()
         {
             // Arrange
             var collection = new AccessModifierNameCollection([new("public")]);
@@ -27,10 +27,10 @@ public class AccessModifierNameCollectionTest
         }
     }
 
-    public class SourceCodeProperty
+    public sealed class SourceCodeProperty
     {
         [Fact]
-        public void Should_ReturnCorrectlyJoinedString()
+        public void ReturnsCorrectlyJoinedString()
         {
             // Arrange
             var collection = new AccessModifierNameCollection(new("public"), new("internal"));

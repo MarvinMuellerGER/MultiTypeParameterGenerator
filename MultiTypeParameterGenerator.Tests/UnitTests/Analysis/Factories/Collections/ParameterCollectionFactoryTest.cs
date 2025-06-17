@@ -3,12 +3,12 @@ using MultiTypeParameterGenerator.Common.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Analysis.Factories.Collections;
 
-public class ParameterCollectionFactoryTest
+public static class ParameterCollectionFactoryTest
 {
-    public class Create
+    public sealed class Create
     {
         [Fact]
-        public void Should_UpdateParameters_BasedOnAcceptedTypeCombination()
+        public void UpdatesParameters_BasedOnAcceptedTypeCombination()
         {
             // Arrange
             var methodToOverload = new MethodToOverload(

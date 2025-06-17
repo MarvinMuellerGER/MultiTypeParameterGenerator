@@ -3,12 +3,12 @@ using MultiTypeParameterGenerator.Common.Models.Entities;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Analysis.Models.Collections;
 
-public class ParameterCollectionTest
+public static class ParameterCollectionTest
 {
-    public class NamesSourceCode
+    public sealed class NamesSourceCode
     {
         [Fact]
-        public void Should_ReturnExpectedNames()
+        public void ReturnsExpectedNames()
         {
             // Arrange
             var collection = new ParameterCollection(
@@ -20,10 +20,10 @@ public class ParameterCollectionTest
         }
     }
 
-    public class SourceCodeProperty
+    public sealed class SourceCodeProperty
     {
         [Fact]
-        public void Should_ReturnJoinedParameterDeclarations()
+        public void ReturnsJoinedParameterDeclarations()
         {
             // Arrange
             var collection = new ParameterCollection(
@@ -35,10 +35,10 @@ public class ParameterCollectionTest
         }
     }
 
-    public class WithAcceptedTypesMethod
+    public sealed class WithAcceptedTypesMethod
     {
         [Fact]
-        public void Should_ReplaceGenericTypesWithAcceptedTypes()
+        public void ReplacesGenericTypesWithAcceptedTypes()
         {
             // Arrange
             var collection = new ParameterCollection(
@@ -61,7 +61,7 @@ public class ParameterCollectionTest
         }
     }
 
-    public class WithThisParameterIfNecessaryMethod
+    public sealed class WithThisParameterIfNecessaryMethod
     {
         private static readonly MethodToOverload MethodToOverload = new(
             false,
@@ -75,7 +75,7 @@ public class ParameterCollectionTest
             new([new(new(null, new("int")), new("x"))]));
 
         [Fact]
-        public void Should_AddThisParameter_WhenGenerateExtensionMethodIsTrue()
+        public void AddsThisParameter_WhenGenerateExtensionMethodIsTrue()
         {
             // Arrange
             var method = MethodToOverload with
@@ -95,7 +95,7 @@ public class ParameterCollectionTest
         }
 
         [Fact]
-        public void Should_NotAddThisParameter_WhenGenerateExtensionMethodIsFalse()
+        public void DoesntAddThisParameter_WhenGenerateExtensionMethodIsFalse()
         {
             // Arrange
             var method = MethodToOverload with

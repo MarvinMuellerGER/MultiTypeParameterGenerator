@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Common.Models.TypedValues;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Models.TypedValues;
 
-public class SourceCodeTest
+public static class SourceCodeTest
 {
-    public class PlusOperator
+    public sealed class PlusOperator
     {
         [Fact]
-        public void Should_MergeValues()
+        public void MergesValues()
         {
             var first = new SourceCode("first ");
             var second = new SourceCode("second");

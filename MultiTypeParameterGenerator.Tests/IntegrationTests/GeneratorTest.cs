@@ -5,9 +5,9 @@ using static MultiTypeParameterGenerator.AccessModifier;
 
 namespace MultiTypeParameterGenerator.Tests.IntegrationTests;
 
-public class Generator
+public static class Generator
 {
-    public class ForMethodWithAcceptedTypesAttributeInInterface
+    public sealed class ForMethodWithAcceptedTypesAttributeInInterface
     {
         [Fact]
         public void OverloadsOfAllPossibleCombinationsShouldBeGenerated()
@@ -139,7 +139,7 @@ public partial interface ISomeClass<T> where T : struct
     public record SomeRecord;
 }
 
-public class SomeClass<T> : ISomeClass<T> where T : struct
+public sealed class SomeClass<T> : ISomeClass<T> where T : struct
 {
     public (T1 value1, T2 value2, T3[] value3) SomeMethod<T1, T2, T3>(T1 value1, T2 value2, T3[] value3)
         where T2 : class?, new() => (value1, value2, value3);

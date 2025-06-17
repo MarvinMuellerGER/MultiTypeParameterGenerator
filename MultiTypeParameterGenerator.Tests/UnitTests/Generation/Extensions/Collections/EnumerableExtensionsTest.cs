@@ -2,12 +2,12 @@ using MultiTypeParameterGenerator.Generation.Extensions.Collections;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Generation.Extensions.Collections;
 
-public class EnumerableExtensionsTest
+public static class EnumerableExtensionsTest
 {
-    public class ToReadonlyList
+    public sealed class ToReadonlyList
     {
         [Fact]
-        public void Should_ReturnExactReadonlyList()
+        public void ReturnsExactReadonlyList()
         {
             // Arrange
             var original = new[] { 1, 2, 3 };

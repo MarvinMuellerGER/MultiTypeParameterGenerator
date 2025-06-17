@@ -6,7 +6,7 @@ using MultiTypeParameterGenerator.Generation.Models.Collections;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Extensions.Roslyn;
 
-public class IncrementalGeneratorPostInitializationContextExtensionsTest
+public sealed class IncrementalGeneratorPostInitializationContextExtensionsTest
 {
     private const BindingFlags NonPublicBindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
     private static readonly Type ContextType = typeof(IncrementalGeneratorPostInitializationContext);
@@ -18,7 +18,7 @@ public class IncrementalGeneratorPostInitializationContextExtensionsTest
         AdditionalSourcesCollectionType.GetMethod("Contains", [typeof(string)]);
 
     [Fact]
-    public void Should_AddSourcesForEachFileInCollection()
+    public void AddsSourcesForEachFileInCollection()
     {
         // Arrange
         var context = CreateIncrementalGeneratorPostInitializationContext();

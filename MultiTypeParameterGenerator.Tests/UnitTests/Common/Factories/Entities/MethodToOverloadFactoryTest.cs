@@ -5,19 +5,19 @@ using NSubstitute;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Factories.Entities;
 
-public class MethodToOverloadFactoryTest
+public static class MethodToOverloadFactoryTest
 {
-    public class Create
+    public sealed class Create
     {
         [Fact]
-        public void Should_CreateMethodToOverloadFromMethodSymbol()
+        public void CreatesMethodToOverloadFromMethodSymbol()
         {
             // Arrange
             const string code =
                 """
                 namespace SomeNamespace
                 {
-                    public class SomeClass
+                    public sealed class SomeClass
                     {
                         public void SomeMethod<T>(int x) { }
                     }
@@ -47,14 +47,14 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleStaticMethod()
+        public void HandlesStaticMethod()
         {
             // Arrange
             const string code =
                 """
                 namespace SomeNamespace
                 {
-                    public class SomeClass
+                    public sealed class SomeClass
                     {
                         public static void StaticMethod<T>(string text) { }
                     }
@@ -81,7 +81,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleInterface()
+        public void HandlesInterface()
         {
             // Arrange
             const string code =
@@ -114,7 +114,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleStruct()
+        public void HandlesStruct()
         {
             // Arrange
             const string code =
@@ -147,7 +147,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleRecord()
+        public void HandlesRecord()
         {
             // Arrange
             const string code =
@@ -180,7 +180,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleRecordStruct()
+        public void HandlesRecordStruct()
         {
             // Arrange
             const string code =
@@ -213,7 +213,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_ReturnNull_WhenMethodHasNoContainingType()
+        public void ReturnsNull_WhenMethodHasNoContainingType()
         {
             // Arrange
             var methodSymbol = Substitute.For<IMethodSymbol>();
@@ -227,14 +227,14 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleGenericMethodWithConstraints()
+        public void HandlesGenericMethodWithConstraints()
         {
             // Arrange
             const string code =
                 """
                 namespace SomeNamespace
                 {
-                    public class SomeClass
+                    public sealed class SomeClass
                     {
                         public void ConstrainedMethod<T, U>() 
                             where T : class, IComparable
@@ -275,7 +275,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleExtensionMethodCase_WhenReadOnlyContainingType()
+        public void HandlesExtensionMethodCase_WhenReadOnlyContainingType()
         {
             // Arrange
             const string code =
@@ -308,7 +308,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_ReturnNull_WhenPrivateMethodInReadOnlyType()
+        public void ReturnsNull_WhenPrivateMethodInReadOnlyType()
         {
             // Arrange
             const string code =
@@ -339,14 +339,14 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleGenericContainingType()
+        public void HandlesGenericContainingType()
         {
             // Arrange
             const string code =
                 """
                 namespace SomeNamespace
                 {
-                    public class GenericClass<T>
+                    public sealed class GenericClass<T>
                     {
                         public void MethodInGenericClass<U>(T t, U u) { }
                     }
@@ -375,7 +375,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleAccessModifiersAttribute()
+        public void HandlesAccessModifiersAttribute()
         {
             // Arrange
             const string code =
@@ -386,7 +386,7 @@ public class MethodToOverloadFactoryTest
 
                 namespace SomeNamespace
                 {
-                    public class SomeClass
+                    public sealed class SomeClass
                     {
                         [AccessModifiers(Public)]
                         protected void SomeMethod() { }
@@ -430,7 +430,7 @@ public class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void Should_HandleAcceptedTypesAttribute()
+        public void HandlesAcceptedTypesAttribute()
         {
             // Arrange
             const string code =
@@ -440,7 +440,7 @@ public class MethodToOverloadFactoryTest
 
                 namespace SomeNamespace
                 {
-                    public class GenericClass<T>
+                    public sealed class GenericClass<T>
                     {
                         protected (T1 value1, T2 value2, T3[] value3) MethodWithAttributes<
                             [AcceptedTypes<long, byte, char>(true, $"{nameof(SomeClass<T>)}.{nameof(SomeClass<T>.TestRecord)}", nameof(TestRecord2))]
@@ -452,7 +452,7 @@ public class MethodToOverloadFactoryTest
                         public record TestRecord2;
                     }
                     
-                    public class SomeClass<T>
+                    public sealed class SomeClass<T>
                     {
                         public record TestRecord;
                     }
