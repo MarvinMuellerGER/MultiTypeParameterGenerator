@@ -156,6 +156,35 @@ public void Handle<[AcceptedTypes<Foo, string, FooBar>(true)] T>(T data)
 // public void Handle<TFooBar>(TFooBar data) where TFooBar : FooBar;
 ```
 
+#### Shared Accepted Type Collections
+
+If you need the same accepted types for multiple methods, you do not need to specify them multiple times. Simply use an AcceptedTypesCollection and give it a (global) type alias:
+
+``` csharp
+using AcceptedTypesOfCalculator = AcceptedTypesCollection<int, double>
+
+public partial class Calculator
+{
+    public T Add<int, [AcceptedTypes<AcceptedTypesOfCalculator>] T>(int first, T second)
+    {
+        // Implementation
+        return first + second;
+    }
+
+    public T Subtract<int, [AcceptedTypes<AcceptedTypesOfCalculator>] T>(int first, T second)
+    {
+        // Implementation
+        return first - second;
+    }
+}
+
+// Generates:
+// public int Add(int first, int value);
+// public double Add(int first, double value);
+// public int Subtract(int first, int value);
+// public double Subtract(int first, double value);
+```
+
 ## Attributes Reference
 
 ### AcceptedTypesAttribute
