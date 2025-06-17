@@ -220,11 +220,11 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
     }
 
     private static bool IsAcceptedTypeCollection(ITypeSymbol type) =>
-        type.ContainingNamespace.Name == typeof(AcceptedTypesCollection<,>).Namespace &&
+        type.ContainingNamespace?.Name == typeof(AcceptedTypesCollection<,>).Namespace &&
         type.Name is nameof(AcceptedTypesCollection<,>);
 
     private static bool IsGenericType(ITypeSymbol type) =>
-        type.ContainingNamespace.Name == typeof(GenericType).Namespace && type.Name is nameof(GenericType);
+        type.ContainingNamespace?.Name == typeof(GenericType).Namespace && type.Name is nameof(GenericType);
 
     private static ParameterCollection GetParameters(IMethodSymbol method) => new(
         method.Parameters.SelectToReadonlyList(p => new Parameter(GetFullTypeName(p.Type), new(p.Name))));
@@ -242,7 +242,7 @@ internal class MethodToOverloadFactory : IMethodToOverloadFactory
         new(GetNamespace(type), GetTypeName(type));
 
     private static Namespace? GetNamespace(ITypeSymbol type) =>
-        type.ContainingNamespace == null ? null : new(type.ContainingNamespace.ToString());
+        type.ContainingNamespace is null ? null : new(type.ContainingNamespace.ToString());
 
     private static TypeName GetTypeName(ITypeSymbol type, Namespace? @namespace) =>
         new(type.ToString().Remove($"{@namespace?.Value}."));
