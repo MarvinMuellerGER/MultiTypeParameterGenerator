@@ -1,6 +1,5 @@
 // ReSharper disable UnusedMember.Global
 
-using JetBrains.Annotations;
 using static MultiTypeParameterGenerator.AccessModifier;
 
 namespace MultiTypeParameterGenerator.Tests.IntegrationTests;
@@ -42,7 +41,7 @@ public static class Generator
             someClass.SomeMethod(longValue, objectValue, [someRecord])
                 .Should().BeEquivalentTo((longValue, objectValue, new[] { someRecord }));
 
-            someClass.SomeMethod_WithSomeRecord_2(longValue, objectValue, [someRecord2])
+            someClass.SomeMethod_WithSomeRecord(longValue, objectValue, [someRecord2])
                 .Should().BeEquivalentTo((longValue, objectValue, new[] { someRecord2 }));
 
             someClass.SomeMethod(byteValue, objectValue, [stringValue])
@@ -57,7 +56,7 @@ public static class Generator
             someClass.SomeMethod(byteValue, objectValue, [someRecord])
                 .Should().BeEquivalentTo((byteValue, objectValue, new[] { someRecord }));
 
-            someClass.SomeMethod_WithSomeRecord_2(byteValue, objectValue, [someRecord2])
+            someClass.SomeMethod_WithSomeRecord(byteValue, objectValue, [someRecord2])
                 .Should().BeEquivalentTo((byteValue, objectValue, new[] { someRecord2 }));
 
             someClass.SomeMethod(charValue, objectValue, [stringValue])
@@ -72,7 +71,7 @@ public static class Generator
             someClass.SomeMethod(charValue, objectValue, [someRecord])
                 .Should().BeEquivalentTo((charValue, objectValue, new[] { someRecord }));
 
-            someClass.SomeMethod_WithSomeRecord_2(charValue, objectValue, [someRecord2])
+            someClass.SomeMethod_WithSomeRecord(charValue, objectValue, [someRecord2])
                 .Should().BeEquivalentTo((charValue, objectValue, new[] { someRecord2 }));
 
             someClass.SomeMethod(someRecord, objectValue, [stringValue])
@@ -90,19 +89,19 @@ public static class Generator
             someClass.SomeMethod_WithSomeRecord_AndSomeRecord_2(someRecord, objectValue, [someRecord2])
                 .Should().BeEquivalentTo((testRecord: someRecord, objectValue, new[] { someRecord2 }));
 
-            someClass.SomeMethod_WithSomeRecord_2(someRecord2, objectValue, [stringValue])
+            someClass.SomeMethod_WithSomeRecord(someRecord2, objectValue, [stringValue])
                 .Should().BeEquivalentTo((testRecord2: someRecord2, objectValue, new[] { stringValue }));
 
-            someClass.SomeMethod_WithSomeRecord_2(someRecord2, objectValue, [intValue])
+            someClass.SomeMethod_WithSomeRecord(someRecord2, objectValue, [intValue])
                 .Should().BeEquivalentTo((testRecord2: someRecord2, objectValue, new[] { intValue }));
 
-            someClass.SomeMethod_WithSomeRecord_2(someRecord2, objectValue, [boolValue])
+            someClass.SomeMethod_WithSomeRecord(someRecord2, objectValue, [boolValue])
                 .Should().BeEquivalentTo((testRecord2: someRecord2, objectValue, new[] { boolValue }));
 
-            someClass.SomeMethod_WithSomeRecord_2_AndSomeRecord(someRecord2, objectValue, [someRecord])
+            someClass.SomeMethod_WithSomeRecord_AndSomeRecord_3(someRecord2, objectValue, [someRecord])
                 .Should().BeEquivalentTo((testRecord2: someRecord2, objectValue, new[] { someRecord }));
 
-            someClass.SomeMethod_WithSomeRecord_2_AndSomeRecord_2(someRecord2, objectValue, [someRecord2])
+            someClass.SomeMethod_WithSomeRecord_AndSomeRecord_4(someRecord2, objectValue, [someRecord2])
                 .Should().BeEquivalentTo((testRecord2: someRecord2, objectValue, new[] { someRecord2 }));
 
             SomeOtherClass.SomeMethod(boolValue).Should().Be(boolValue);
@@ -147,7 +146,6 @@ public sealed class SomeClass<T> : ISomeClass<T> where T : struct
     public record SomeRecord : ISomeClass<T>.ISomeRecord;
 }
 
-[UsedImplicitly]
 public static partial class SomeOtherClass
 {
     [AccessModifiers(Internal)]
@@ -155,3 +153,23 @@ public static partial class SomeOtherClass
 
     public record SomeOtherRecord;
 }
+
+public partial interface IKafkaProducer
+{
+    /// <summary>
+    /// Send a message to the specified topic via outbox. Falls back to direct sending if no outbox is configured for this topic.
+    /// </summary>
+    /// <param name="topic">The topic to send the Kafka message to</param>
+    /// <param name="key">The key of the Kafka message</param>
+    /// <param name="value">The value of the Kafka message. If the value is 'null', then a Kafka tombstone message will be produced.</param>
+    /// <param name="headers">Optional Kafka message headers</param>
+    /// <param name="cancellationToken">CancellationToken</param>
+    /// <typeparam name="TKey">Key type of the message</typeparam>
+    /// <typeparam name="TValue">Value type of the message</typeparam>
+    /// <returns>An awaitable task representing the insertion into the outbox or a direct dispatch to the Kafka cluster</returns>
+    [AccessModifiers(Public)]
+    protected Task ProduceAsync<[AcceptedTypes<int, bool, double, string, float, long, byte[], IComparable>] TKey, TValue>(
+        string topic, TKey key, TValue value, IReadOnlyCollection<HeaderEntry>? headers = null, CancellationToken cancellationToken = default);
+}
+
+public sealed record HeaderEntry(string Key, ReadOnlyMemory<byte>? Value);

@@ -7,15 +7,6 @@ internal static class EnumerableExtensions
     internal static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action) =>
         source.ToList().ForEach(action);
 
-    internal static void ReplaceWhere<TSource>(
-        this List<TSource> list, Predicate<TSource> predicate, TSource newValue)
-    {
-        var index = list.FindIndex(predicate);
-        if (index is -1) return;
-
-        list[index] = newValue;
-    }
-
     internal static void RemoveAll<TSource>(this List<TSource> source, IEnumerable<TSource> itemsToRemove) =>
         itemsToRemove.ForEach(i => source.Remove(i));
 
@@ -29,6 +20,12 @@ internal static class EnumerableExtensions
     internal static IReadOnlyList<TResult> SelectToReadonlyList<TSource, TResult>(
         this IEnumerable<TSource> enumerable, Func<TSource, TResult> selector) =>
         enumerable.Select(selector).ToList();
+    
+    internal delegate TResult IndexedSelector<in TSource, out TResult>(int index, TSource item);
+
+    internal static IReadOnlyList<TResult> SelectWithIndexToReadonlyList<TSource, TResult>(
+        this IEnumerable<TSource> enumerable, IndexedSelector<TSource, TResult> selector) =>
+        enumerable.SelectWithIndexToReadonlyList(selectorTuple => selector(selectorTuple.Index, selectorTuple.Item));
 
     internal static IReadOnlyList<TResult> SelectWithIndexToReadonlyList<TSource, TResult>(
         this IEnumerable<TSource> enumerable, Func<(int Index, TSource Item), TResult> selector) =>

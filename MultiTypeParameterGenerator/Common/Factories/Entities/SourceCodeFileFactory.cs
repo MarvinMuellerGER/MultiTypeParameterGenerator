@@ -26,7 +26,7 @@ internal sealed class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourc
     private static FileName GetFileName(MethodSourceCode methodSourceCode)
     {
         var fileNameWithoutExtension = new FileName(
-            $"{methodSourceCode.ContainingType.FullNameWithGenericTypesCount}{GetPrefix(methodSourceCode)}.{GetMethodNameForFileName(methodSourceCode)}");
+            $"{methodSourceCode.ContainingType.Type.FullNameWithGenericTypesCount}{GetPrefix(methodSourceCode)}.{GetMethodNameForFileName(methodSourceCode)}");
 
         var key = (fileNameWithoutExtension, methodSourceCode.ParametersTypeNames);
         if (!IndexByFileNameAndParameters
@@ -51,12 +51,12 @@ internal sealed class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourc
 
               {{GetContainingTypeKindWithAccessModifiers(methodSourceCode)}} {{GetContainingTypeName(methodSourceCode)}}
               {
-              {{methodSourceCode.SourceCode.Value.RemoveMultiple(GetNamespacesToRemove(methodSourceCode))}}
+              {{methodSourceCode.SourceCode}}
               }
               """);
 
     private static SourceCode GetNamespace(MethodSourceCode methodSourceCode) =>
-        new($"namespace {methodSourceCode.ContainingType.Name.Namespace};");
+        new($"namespace {methodSourceCode.ContainingType.Type.Name.Namespace};");
 
     private static SourceCode
         GetContainingTypeKindWithAccessModifiers(MethodSourceCode methodSourceCode) =>
@@ -66,10 +66,7 @@ internal sealed class SourceCodeFileFactory(IMethodSourceCodeFactory methodSourc
 
     private static SourceCode GetContainingTypeName(MethodSourceCode methodSourceCode) =>
         new(
-            $"{methodSourceCode.ContainingType.Name.TypeName}{GetPrefix(methodSourceCode)}{GetGenericTypes(methodSourceCode)}{GetTypeConstraints(methodSourceCode)}");
-
-    private static IReadOnlyList<string> GetNamespacesToRemove(MethodSourceCode methodSourceCode) =>
-        methodSourceCode.NamespacesToRemove.Values.SelectToReadonlyList(n => $"{n}.");
+            $"{methodSourceCode.ContainingType.Type.Name.TypeName}{GetPrefix(methodSourceCode)}{GetGenericTypes(methodSourceCode)}{GetTypeConstraints(methodSourceCode)}");
 
     private static SourceCode GetGenericTypes(MethodSourceCode methodSourceCode) =>
         methodSourceCode.ContainingType.GenericTypes.SourceCode;

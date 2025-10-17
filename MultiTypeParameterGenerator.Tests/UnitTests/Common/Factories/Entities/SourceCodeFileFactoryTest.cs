@@ -28,9 +28,9 @@ public static class SourceCodeFileFactoryTest
             var methodToOverload = new MethodToOverload(
                 false,
                 false,
-                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
+                new(new("class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
                 new(),
-                new(null, new("void")),
+                new NamedType(new(null, new("void"))),
                 new("SomeMethod"),
                 new([new(new("T"))]),
                 new(),
@@ -39,7 +39,7 @@ public static class SourceCodeFileFactoryTest
             var expectedMethodSourceCodes = new MethodSourceCode(
                 false,
                 false,
-                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()), true,
+                new(new("class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()), true,
                 new("SomeMethod"),
                 new("int"),
                 new(),

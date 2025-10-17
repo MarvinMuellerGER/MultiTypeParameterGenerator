@@ -9,6 +9,8 @@ public static class MethodToOverloadFactoryTest
 {
     public sealed class Create
     {
+        private static readonly MethodToOverloadFactory MethodToOverloadFactory = new(new TypeFactory());
+
         [Fact]
         public void CreatesMethodToOverloadFromMethodSymbol()
         {
@@ -35,15 +37,13 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "SomeMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
             result.Name.Value.Should().Be("SomeMethod");
-            result.GenericTypes.Values.Should().ContainSingle()
-                .Which.Name.Value.Should().Be("T");
-            result.Parameters.Values.Should().ContainSingle()
-                .Which.Type.Value.Should().Be("int");
+            result.GenericTypes.Values.Should().ContainSingle().Which.Name.Value.Should().Be("T");
+            result.Parameters.Values.Should().ContainSingle().Which.Type.SourceCode.Value.Should().Be("int");
         }
 
         [Fact]
@@ -71,7 +71,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "StaticMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -105,7 +105,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "InterfaceMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -138,7 +138,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "StructMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -171,7 +171,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "RecordMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -204,7 +204,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "RecordStructMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -220,7 +220,7 @@ public static class MethodToOverloadFactoryTest
             methodSymbol.ContainingType.Returns((INamedTypeSymbol)null!);
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().BeNull();
@@ -256,7 +256,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "ConstrainedMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -299,7 +299,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "ExtensionCandidateMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -332,7 +332,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "PrivateMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().BeNull();
@@ -363,15 +363,15 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "MethodInGenericClass");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
             result.ContainingType.GenericTypes.Values.Should().ContainSingle()
                 .Which.Name.Value.Should().Be("T");
             result.Parameters.Values.Should().HaveCount(2);
-            result.Parameters.Values[0].Type.Value.Should().Be("T");
-            result.Parameters.Values[1].Type.Value.Should().Be("U");
+            result.Parameters.Values[0].Type.SourceCode.Value.Should().Be("T");
+            result.Parameters.Values[1].Type.SourceCode.Value.Should().Be("U");
         }
 
         [Fact]
@@ -421,7 +421,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "SomeMethod");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -482,7 +482,7 @@ public static class MethodToOverloadFactoryTest
                 .Single(m => m.Name == "MethodWithAttributes");
 
             // Act
-            var result = new MethodToOverloadFactory().Create(methodSymbol);
+            var result = MethodToOverloadFactory.Create(methodSymbol);
 
             // Assert
             result.Should().NotBeNull();
@@ -493,31 +493,40 @@ public static class MethodToOverloadFactoryTest
             acceptedTypesForAffectedGenericTypes[0].AffectedGenericType.Name.Value.Should().Be("T1");
             var acceptedTypesOfFirstAffectedGenericType = acceptedTypesForAffectedGenericTypes[0].AcceptedTypes.Values;
             acceptedTypesOfFirstAffectedGenericType.Should().HaveCount(5);
-            acceptedTypesOfFirstAffectedGenericType[0].Name.Value.Should().Be("long");
+            acceptedTypesOfFirstAffectedGenericType[0].Type.SourceCode.Value.Should()
+                .Be("long");
             acceptedTypesOfFirstAffectedGenericType[0].UseTypeConstraint.Should().BeFalse();
-            acceptedTypesOfFirstAffectedGenericType[1].Name.Value.Should().Be("byte");
+            acceptedTypesOfFirstAffectedGenericType[1].Type.SourceCode.Value.Should()
+                .Be("byte");
             acceptedTypesOfFirstAffectedGenericType[1].UseTypeConstraint.Should().BeFalse();
-            acceptedTypesOfFirstAffectedGenericType[2].Name.Value.Should().Be("char");
+            acceptedTypesOfFirstAffectedGenericType[2].Type.SourceCode.Value.Should()
+                .Be("char");
             acceptedTypesOfFirstAffectedGenericType[2].UseTypeConstraint.Should().BeFalse();
-            acceptedTypesOfFirstAffectedGenericType[3].Name.Value.Should().Be("SomeNamespace.SomeClass<T>.TestRecord");
+            acceptedTypesOfFirstAffectedGenericType[3].Type.SourceCode.Value.Should()
+                .Be("SomeNamespace.SomeClass<T>.TestRecord");
             acceptedTypesOfFirstAffectedGenericType[3].UseTypeConstraint.Should().BeTrue();
-            acceptedTypesOfFirstAffectedGenericType[4].Name.Value.Should()
-                .Be("SomeNamespace.GenericClass<T>.TestRecord2");
+            acceptedTypesOfFirstAffectedGenericType[4].Type.SourceCode.Value.Should()
+                .Be("TestRecord2");
             acceptedTypesOfFirstAffectedGenericType[4].UseTypeConstraint.Should().BeTrue();
 
             acceptedTypesForAffectedGenericTypes[1].AffectedGenericType.Name.Value.Should().Be("T3");
             var acceptedTypesOfSecondAffectedGenericType = acceptedTypesForAffectedGenericTypes[1].AcceptedTypes.Values;
             acceptedTypesOfSecondAffectedGenericType.Should().HaveCount(5);
-            acceptedTypesOfSecondAffectedGenericType[0].Name.Value.Should().Be("string");
+            acceptedTypesOfSecondAffectedGenericType[0].Type.SourceCode.Value
+                .Should().Be("string");
             acceptedTypesOfSecondAffectedGenericType[0].UseTypeConstraint.Should().BeFalse();
-            acceptedTypesOfSecondAffectedGenericType[1].Name.Value.Should().Be("int");
+            acceptedTypesOfSecondAffectedGenericType[1].Type.SourceCode.Value
+                .Should().Be("int");
             acceptedTypesOfSecondAffectedGenericType[1].UseTypeConstraint.Should().BeFalse();
-            acceptedTypesOfSecondAffectedGenericType[2].Name.Value.Should().Be("bool");
+            acceptedTypesOfSecondAffectedGenericType[2].Type.SourceCode.Value
+                .Should().Be("bool");
             acceptedTypesOfSecondAffectedGenericType[2].UseTypeConstraint.Should().BeFalse();
-            acceptedTypesOfSecondAffectedGenericType[3].Name.Value.Should().Be("SomeNamespace.SomeClass<T>.TestRecord");
+            acceptedTypesOfSecondAffectedGenericType[3].Type.SourceCode.Value
+                .Should().Be("SomeNamespace.SomeClass<T>.TestRecord");
             acceptedTypesOfSecondAffectedGenericType[3].UseTypeConstraint.Should().BeTrue();
-            acceptedTypesOfSecondAffectedGenericType[4].Name.Value.Should()
-                .Be("SomeNamespace.GenericClass<T>.TestRecord2");
+            acceptedTypesOfSecondAffectedGenericType[4].Type.SourceCode.Value
+                .Should()
+                .Be("TestRecord2");
             acceptedTypesOfSecondAffectedGenericType[4].UseTypeConstraint.Should().BeTrue();
         }
     }

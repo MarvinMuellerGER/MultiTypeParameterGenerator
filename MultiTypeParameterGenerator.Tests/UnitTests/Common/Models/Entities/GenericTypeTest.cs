@@ -12,7 +12,7 @@ public static class GenericTypeTest
         public void CreatesGenericTypeNameWithSameValue()
         {
             // Arrange
-            var accepted = new AcceptedType(new(null, new("AcceptedValue")), false, false);
+            var accepted = new AcceptedType(new NamedType(new(null, new("AcceptedValue"))), false);
 
             // Act & Assert
             GenericType.FromAcceptedType(accepted).Name.Value.Should().Be("AcceptedValue");

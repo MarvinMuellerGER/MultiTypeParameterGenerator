@@ -7,13 +7,13 @@ public static class MethodToOverloadTest
     private static readonly MethodToOverload MethodToOverload = new(
         false,
         true,
-        new(new("Class"), new(new("SomeNamespace"), new("SomeClass")), new()),
+        new(new("Class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
         new([new("public")]),
-        new(null, new("void")),
+        new NamedType(new(null, new("void"))),
         new("SomeMethod"),
         new(),
         new(),
-        new([new(new(null, new("int")), new("x"))]));
+        new([new(new NamedType(new(null, new("int"))), new("x"))]));
 
     public sealed class MethodToOverloadIsStatic
     {

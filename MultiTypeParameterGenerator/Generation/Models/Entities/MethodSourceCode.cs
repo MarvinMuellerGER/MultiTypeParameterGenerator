@@ -20,16 +20,11 @@ internal sealed record MethodSourceCode(
         ? new()
         : new(FullTypeNames.WithUniqueTypeNames.Values.SelectToReadonlyList(t => t.Namespace)
             .WhereNotNull()
+            .Distinct()
             .OrderBy(n => n.Value)
             .WhereToReadonlyList(n =>
-                n != ContainingType.Name.Namespace &&
-                n.Value != ContainingType.Name.Value));
-
-    internal NamespaceCollection NamespacesToRemove => UseFullTypeNames
-        ? new()
-        : new(FullTypeNames.Values.SelectToReadonlyList(t => t.Namespace)
-            .Concat([new(ContainingType.NameInclGenericTypes.TypeName.Value)])
-            .OrderByDescending(n => n?.Value.Length).WhereNotNull());
+                n != ContainingType.Type.Name.Namespace &&
+                n.Value != ContainingType.Type.Name.Value));
 
     internal FullTypeNameCollection FullTypeNamesWithTypeAlias
     {

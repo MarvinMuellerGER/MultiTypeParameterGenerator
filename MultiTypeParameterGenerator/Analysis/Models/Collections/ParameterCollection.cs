@@ -16,17 +16,21 @@ internal sealed record ParameterCollection(params IReadOnlyList<Parameter> Value
 
     internal SourceCode SourceCode => new(Values.Select(p => p.SourceCode).Join());
 
-    internal FullTypeNameCollection FullTypeNames => new(Values.Select(p => p.Type));
+    internal FullTypeNameCollection FullTypeNames =>
+        new(Values.SelectManyToReadonlyList(p => p.Type.FullTypeNames.Values));
 
     internal ParameterCollection WithAcceptedTypes(AcceptedTypeCombination acceptedTypeCombination) =>
         new(Values.ReplaceAll(p =>
-            p with { TypeNameForSourceCode = new(p.Type.WithAcceptedTypes(acceptedTypeCombination).TypeName.Value) }));
+            p with
+            {
+                TypeNameForSourceCode = p.Type.WithAcceptedTypes(acceptedTypeCombination).ShortenedSourceCode
+            }));
 
     internal ParameterCollection WithThisParameterIfNecessary(MethodToOverload methodToOverload) =>
         methodToOverload.GenerateExtensionMethod ? WithThisParameter(methodToOverload) : this;
 
     private ParameterCollection WithThisParameter(MethodToOverload methodToOverload) =>
         new(Values.Prepend(new(
-            methodToOverload.ContainingType.Name,
+            methodToOverload.ContainingType.Type,
             new(ThisIdentifier))).ToList());
 }

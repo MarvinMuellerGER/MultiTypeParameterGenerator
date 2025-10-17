@@ -9,7 +9,7 @@ internal sealed record MethodToOverload(
     bool GenerateExtensionMethod,
     ContainingType ContainingType,
     AccessModifierNameCollection AccessModifiers,
-    FullTypeName ReturnType,
+    Type ReturnType,
     MethodName Name,
     GenericTypeCollection GenericTypes,
     AcceptedTypesForAffectedGenericTypeCollection AffectedGenericTypes,
@@ -18,5 +18,6 @@ internal sealed record MethodToOverload(
     internal bool MethodToOverloadIsStatic => AccessModifiers.Values.Select(v => v.Value).Contains("static");
 
     internal FullTypeNameCollection FullTypeNames =>
-        Parameters.FullTypeNames.ConcatDistinct(AffectedGenericTypes.FullTypeNames).ConcatDistinct(ReturnType);
+        Parameters.FullTypeNames.ConcatDistinct(AffectedGenericTypes.FullTypeNames)
+            .ConcatDistinct(ReturnType.FullTypeNames);
 }

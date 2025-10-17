@@ -18,33 +18,33 @@ public static class MethodSourceCodeFactoryTest
             var methodToOverload = new MethodToOverload(
                 false,
                 false,
-                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
+                new(new("class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
                 new(new("internal"), new("static")),
-                new(null, new("void")),
+                new NamedType(new(null, new("void"))),
                 new("SomeMethod"),
                 new(new(new("T1")), new(new("T2"))),
                 new(
                     new(new(new("T1")), new(
-                        new(new(null, new("bool")), false, false),
-                        new(new(null, new("SomeRecord")), true, true))),
+                        new(new NamedType(new(null, new("bool"))), false),
+                        new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true))),
                     new(new(new("T2")), new(
-                        new(new(null, new("int")), true, false),
-                        new(new(null, new("SomeRecord")), false, true)))),
+                        new(new NamedType(new(null, new("int")), null, new(), true), false),
+                        new(new NamedType(new(null, new("SomeRecord"))), true)))),
                 new(
-                    new(new(null, new("int")), new("firstParam")),
-                    new(new(null, new("T1")), new("secondParam")),
-                    new(new(null, new("T2")), new("thirdParam"))));
+                    new(new NamedType(new(null, new("int"))), new("firstParam")),
+                    new(new NamedType(new(null, new("T1"))), new("secondParam")),
+                    new(new NamedType(new(null, new("T2"))), new("thirdParam"))));
 
             var acceptedTypeCombinationCollection =
                 new AcceptedTypeCombinationCollection(
-                    new(new(new(new("T1")), false, new(new(null, new("bool")), false, false, 1)),
-                        new(new(new("T2")), false, new(new(null, new("int")), true, false, 1))),
-                    new(new(new(new("T1")), false, new(new(null, new("bool")), false, false, 1)),
-                        new(new(new("T2")), false, new(new(null, new("SomeRecord")), false, true, 1, 1))),
-                    new(new(new(new("T1")), false, new(new(null, new("SomeRecord")), true, true, 1, 1)),
-                        new(new(new("T2")), false, new(new(null, new("int")), true, false, 1))),
-                    new(new(new(new("T1")), false, new(new(null, new("SomeRecord")), true, true, 1, 1)),
-                        new(new(new("T2")), false, new(new(null, new("SomeRecord")), false, true, 1, 2))));
+                    new(new(new(new("T1")), false, new(new NamedType(new(null, new("bool"))), false, 1)),
+                        new(new(new("T2")), false, new(new NamedType(new(null, new("int")), null, new(), true), false, 1))),
+                    new(new(new(new("T1")), false, new(new NamedType(new(null, new("bool"))), false, 1)),
+                        new(new(new("T2")), false, new(new NamedType(new(null, new("SomeRecord"))), true, 1))),
+                    new(new(new(new("T1")), false, new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true, 1)),
+                        new(new(new("T2")), false, new(new NamedType(new(null, new("int")), null, new(), true), false, 1))),
+                    new(new(new(new("T1")), false, new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true, 1)),
+                        new(new(new("T2")), false, new(new NamedType(new(null, new("SomeRecord"))), true, 2))));
 
             var acceptedTypeCombinationCollectionFactory = Substitute.For<IAcceptedTypeCombinationCollectionFactory>();
             acceptedTypeCombinationCollectionFactory.Create(methodToOverload)
@@ -53,13 +53,13 @@ public static class MethodSourceCodeFactoryTest
             var parameterCollectionFactory = Substitute.For<IParameterCollectionFactory>();
             parameterCollectionFactory.Create(methodToOverload, Arg.Any<AcceptedTypeCombination>())
                 .Returns(args => new(
-                    new(new(null, new("int")), new("firstParam")),
-                    new(new(null, new("T1")), new("secondParam"))
+                    new(new NamedType(new(null, new("int"))), new("firstParam")),
+                    new(new GenericTypeParameter(new(null, new("T1"))), new("secondParam"))
                     {
                         TypeNameForSourceCode =
                             args.Arg<AcceptedTypeCombination>().Values[0].AcceptedType.TypeNameForSourceCode
                     },
-                    new(new(null, new("T2")), new("thirdParam"))
+                    new(new GenericTypeParameter(new(null, new("T2"))), new("thirdParam"))
                     {
                         TypeNameForSourceCode =
                             args.Arg<AcceptedTypeCombination>().Values[1].AcceptedType.TypeNameForSourceCode
@@ -68,7 +68,7 @@ public static class MethodSourceCodeFactoryTest
             var expectedMethodSourceCode = new MethodSourceCode(
                 false,
                 false,
-                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
+                new(new("class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
                 true,
                 new("SomeMethod"),
                 new("int, T1, T2"),

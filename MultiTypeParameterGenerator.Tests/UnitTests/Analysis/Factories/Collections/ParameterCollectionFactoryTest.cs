@@ -14,16 +14,18 @@ public static class ParameterCollectionFactoryTest
             var methodToOverload = new MethodToOverload(
                 false,
                 false,
-                new(new("class"), new(new("SomeNamespace"), new("SomeClass")), new()),
+                new(new("class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
                 new([new("public")]),
-                new(null, new("void")),
+                new NamedType(new(null, new("void"))),
                 new("SomeMethod"),
                 new(),
                 new(),
-                new([new(new(null, new("T1")), new("value"))]));
+                new([new(new NamedType(new(null, new("T1"))), new("value"))]));
 
             var acceptedTypeCombination =
-                new AcceptedTypeCombination([new(new(new("T1")), false, new(new(null, new("int")), false, false))]);
+                new AcceptedTypeCombination([
+                    new(new(new("T1")), false, new(new NamedType(new(null, new("int"))), false))
+                ]);
 
             // Act
             var result = new ParameterCollectionFactory().Create(methodToOverload, acceptedTypeCombination);

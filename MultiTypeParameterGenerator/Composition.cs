@@ -15,6 +15,7 @@ internal sealed partial class Composition
     private void Setup() => DI.Setup()
         .RootBind<IMethodToOverloadFactory>(nameof(MethodToOverloadFactory)).To<MethodToOverloadFactory>()
         .RootBind<ISourceCodeFileFactory>(nameof(SourceCodeFileFactory)).To<SourceCodeFileFactory>()
+        .Bind<ITypeFactory>().To<TypeFactory>()
         .Bind<IMethodSourceCodeFactory>().To<MethodSourceCodeFactory>()
         .Bind<IAcceptedTypeCombinationCollectionFactory>().To<AcceptedTypeCombinationCollectionFactory>()
         .Bind<IParameterCollectionFactory>().To<ParameterCollectionFactory>();
