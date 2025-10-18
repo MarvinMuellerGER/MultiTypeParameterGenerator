@@ -11,7 +11,7 @@ internal static class SyntaxValueProviderExtensions
         string fullyQualifiedMetadataName,
         Func<SyntaxNode, CancellationToken, bool> predicate,
         Func<GeneratorAttributeSyntaxContext, CancellationToken, T> transform,
-        int minGenericTypesCount = 2,
+        int minGenericTypesCount = 1,
         int maxGenericTypesCount = 10) =>
         syntaxValueProvider.ForAttributesWithMetadataNames(GetGenericAttributeNames(
             fullyQualifiedMetadataName, minGenericTypesCount, maxGenericTypesCount), predicate, transform);

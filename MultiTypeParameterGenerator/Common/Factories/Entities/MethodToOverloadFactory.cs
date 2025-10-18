@@ -134,7 +134,8 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
         return new(types.SelectToReadonlyList(tp => GetAcceptedType(tp, asGenericTypes)));
     }
 
-    private static AcceptedTypesAttributeInformation GetAcceptedTypesAttributeInformation(ITypeParameterSymbol type)
+    private static (IReadOnlyList<ITypeSymbol> Types, bool AsGenericTypes) GetAcceptedTypesAttributeInformation(
+        ITypeParameterSymbol type)
     {
         var acceptedTypesAttribute = type.GetAttributes()
             .SingleOrDefault(a => a.AttributeClass?.Name is nameof(AcceptedTypesAttribute));
@@ -156,7 +157,7 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
             .Select(typeName => GetTypeSymbolByName(type.ContainingType, typeName))
             .WhereNotNull();
 
-        return new([..types.Concat(additionalTypes)], asGenericTypes);
+        return ([..types.Concat(additionalTypes)], asGenericTypes);
     }
 
     /// <summary>
@@ -236,8 +237,4 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
 
     private static ImmutableArray<ITypeSymbol> GetTypeArguments(ITypeSymbol typeSymbol) =>
         ((INamedTypeSymbol)typeSymbol).TypeArguments;
-
-    private readonly record struct AcceptedTypesAttributeInformation(
-        IReadOnlyList<ITypeSymbol> Types,
-        bool AsGenericTypes);
 }
