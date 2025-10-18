@@ -37,11 +37,13 @@ internal sealed class MethodSourceCodeFactory(
     private SourceCode GetOverloadSourceCode(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
         new(
-            $"{Tab}{GetXmlDocumentationComment(methodToOverload)}{NewLine}{Tab}{GetHeaderSourceCode(methodToOverload, acceptedTypeCombination)} =>{NewLine}{DoubleTab}{BodySourceCode(methodToOverload, acceptedTypeCombination)}");
+            $"{Tab}{GetXmlDocumentationComment(methodToOverload)}{GetHeaderSourceCode(methodToOverload, acceptedTypeCombination)} =>{NewLine}{DoubleTab}{BodySourceCode(methodToOverload, acceptedTypeCombination)}");
 
     private static SourceCode GetXmlDocumentationComment(MethodToOverload methodToOverload) =>
-        new(
-            $"/// <inheritdoc cref=\"{methodToOverload.Name}{{{GetOriginalTypeParametersSourceCodeWithoutBrackets(methodToOverload)}}}({GetParameterTypeNamesSourceCodeWithBraces(methodToOverload)})\" />");
+        methodToOverload.HasXmlDoc
+            ? new(
+                $"/// <inheritdoc cref=\"{methodToOverload.Name}{{{GetOriginalTypeParametersSourceCodeWithoutBrackets(methodToOverload)}}}({GetParameterTypeNamesSourceCodeWithBraces(methodToOverload)})\" />{NewLine}{Tab}")
+            : new();
 
     private SourceCode GetHeaderSourceCode(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>

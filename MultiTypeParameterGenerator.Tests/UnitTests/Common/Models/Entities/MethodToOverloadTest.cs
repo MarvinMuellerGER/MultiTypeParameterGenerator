@@ -7,6 +7,7 @@ public static class MethodToOverloadTest
     private static readonly MethodToOverload MethodToOverload = new(
         false,
         true,
+        false,
         new(new("Class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
         new([new("public")]),
         new NamedType(new(null, new("void"))),

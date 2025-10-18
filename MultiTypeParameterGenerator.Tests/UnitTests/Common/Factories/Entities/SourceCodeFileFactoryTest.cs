@@ -28,6 +28,7 @@ public static class SourceCodeFileFactoryTest
             var methodToOverload = new MethodToOverload(
                 false,
                 false,
+                false,
                 new(new("class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
                 new(),
                 new NamedType(new(null, new("void"))),

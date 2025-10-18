@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using MultiTypeParameterGenerator.Analysis.Extensions.Enums;
 using MultiTypeParameterGenerator.Analysis.Models.Collections;
 using MultiTypeParameterGenerator.Analysis.Models.Entities;
@@ -30,6 +31,7 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
 
         return new(useFullTypeNames,
             generateExtensionMethod,
+            HasAnyDocumentationComment(method),
             GetContainingType(containingTypeKind, containingType),
             GetAccessModifiers(method),
             GetReturnType(method),
@@ -38,6 +40,15 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
             GetAffectedGenericTypes(method),
             GetParameters(method));
     }
+
+    private static bool HasAnyDocumentationComment(IMethodSymbol methodSymbol) =>
+        methodSymbol.DeclaringSyntaxReferences.FirstOrDefault()?
+            .GetSyntax()
+            .GetLeadingTrivia()
+            .Any(t =>
+                t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
+                t.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia)) ?? false;
+
 
     private ContainingType
         GetContainingType(TypeKindName? containingTypeKind, INamedTypeSymbol containingType) =>

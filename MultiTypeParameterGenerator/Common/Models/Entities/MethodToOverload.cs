@@ -7,6 +7,7 @@ namespace MultiTypeParameterGenerator.Common.Models.Entities;
 internal sealed record MethodToOverload(
     bool UseFullTypeNames,
     bool GenerateExtensionMethod,
+    bool HasXmlDoc,
     ContainingType ContainingType,
     AccessModifierNameCollection AccessModifiers,
     Type ReturnType,

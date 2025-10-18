@@ -23,6 +23,7 @@ public static class AcceptedTypeCombinationCollectionFactoryTest
             var methodToOverload = new MethodToOverload(
                 false,
                 true,
+                false,
                 new(new("Class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
                 new([new("public")]),
                 new NamedType(new(null, new("void"))),

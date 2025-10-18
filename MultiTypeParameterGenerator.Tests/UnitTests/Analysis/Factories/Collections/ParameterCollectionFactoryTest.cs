@@ -14,6 +14,7 @@ public static class ParameterCollectionFactoryTest
             var methodToOverload = new MethodToOverload(
                 false,
                 false,
+                false,
                 new(new("class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
                 new([new("public")]),
                 new NamedType(new(null, new("void"))),

@@ -18,6 +18,7 @@ public static class MethodSourceCodeFactoryTest
             var methodToOverload = new MethodToOverload(
                 false,
                 false,
+                true,
                 new(new("class"), new(new(new("SomeNamespace"), new("SomeClass"))), new()),
                 new(new("internal"), new("static")),
                 new NamedType(new(null, new("void"))),
