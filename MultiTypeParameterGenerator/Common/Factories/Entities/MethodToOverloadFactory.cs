@@ -18,10 +18,7 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
 {
     public MethodToOverload? Create(IMethodSymbol method)
     {
-        if (method.ContainingType is not { } containingType)
-            // nothing to do if this method isn't used in a type
-            return null;
-
+        var containingType = method.ContainingType;
         var useFullTypeNames = method.ContainingAssembly.GetAttributes()
             .Any(a => a.AttributeClass?.Name is nameof(UseFullTypeNamesAttribute));
 

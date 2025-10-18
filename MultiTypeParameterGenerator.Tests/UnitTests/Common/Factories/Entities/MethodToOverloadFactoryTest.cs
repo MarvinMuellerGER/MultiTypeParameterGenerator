@@ -213,20 +213,6 @@ public static class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void ReturnsNull_WhenMethodHasNoContainingType()
-        {
-            // Arrange
-            var methodSymbol = Substitute.For<IMethodSymbol>();
-            methodSymbol.ContainingType.Returns((INamedTypeSymbol)null!);
-
-            // Act
-            var result = MethodToOverloadFactory.Create(methodSymbol);
-
-            // Assert
-            result.Should().BeNull();
-        }
-
-        [Fact]
         public void HandlesGenericMethodWithConstraints()
         {
             // Arrange
