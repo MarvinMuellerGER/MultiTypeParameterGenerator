@@ -11,7 +11,8 @@ public static class AcceptedTypeTest
         public void ReturnsTypeName_WhenUseTypeConstraintIsFalse()
         {
             // Arrange
-            var acceptedType = new AcceptedType(new NamedType(new(new("SomeNamespace"), new("SomeClass"))), false, false);
+            var acceptedType =
+                new AcceptedType(new NamedType(new(new("SomeNamespace"), new("SomeClass"))), false, false);
 
             // Act & Assert
             acceptedType.TypeNameForSourceCode.Value.Should()

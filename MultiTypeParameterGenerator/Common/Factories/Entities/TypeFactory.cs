@@ -30,7 +30,8 @@ internal sealed class TypeFactory : ITypeFactory
             GetNullableAnnotation(type));
 
     private NamedType CreateNamedType(INamedTypeSymbol type) =>
-        new(GetFullTypeName(type), GetContainingType(type), CreateTypeCollection(type.TypeArguments), GetNullableAnnotation(type));
+        new(GetFullTypeName(type), GetContainingType(type), CreateTypeCollection(type.TypeArguments),
+            GetNullableAnnotation(type));
 
     private ArrayType CreateArrayType(IArrayTypeSymbol type) => new(Create(type.ElementType));
 

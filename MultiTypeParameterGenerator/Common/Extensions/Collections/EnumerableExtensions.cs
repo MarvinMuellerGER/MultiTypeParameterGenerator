@@ -20,8 +20,6 @@ internal static class EnumerableExtensions
     internal static IReadOnlyList<TResult> SelectToReadonlyList<TSource, TResult>(
         this IEnumerable<TSource> enumerable, Func<TSource, TResult> selector) =>
         enumerable.Select(selector).ToList();
-    
-    internal delegate TResult IndexedSelector<in TSource, out TResult>(int index, TSource item);
 
     internal static IReadOnlyList<TResult> SelectWithIndexToReadonlyList<TSource, TResult>(
         this IEnumerable<TSource> enumerable, IndexedSelector<TSource, TResult> selector) =>
@@ -63,4 +61,6 @@ internal static class EnumerableExtensions
             yield return (index, element);
         }
     }
+
+    internal delegate TResult IndexedSelector<in TSource, out TResult>(int index, TSource item);
 }

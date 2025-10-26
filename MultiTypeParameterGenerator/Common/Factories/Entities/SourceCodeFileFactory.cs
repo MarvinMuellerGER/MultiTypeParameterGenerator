@@ -1,5 +1,4 @@
 using MultiTypeParameterGenerator.Analysis.Models.TypedValues;
-using MultiTypeParameterGenerator.Common.Extensions;
 using MultiTypeParameterGenerator.Common.Models.Entities;
 using MultiTypeParameterGenerator.Common.Models.TypedValues;
 using MultiTypeParameterGenerator.Generation.Factories.Entities;

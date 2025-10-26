@@ -24,7 +24,7 @@ internal sealed record ParameterCollection(params IReadOnlyList<Parameter> Value
         new(Values.ReplaceAll(p =>
         {
             var withAcceptedTypes = p.Type.WithAcceptedTypes(acceptedTypeCombination);
-            
+
             return p with
             {
                 TypeNameForSourceCode =

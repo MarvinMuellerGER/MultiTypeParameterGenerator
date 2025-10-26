@@ -1,7 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using MultiTypeParameterGenerator.Common.Factories.Entities;
-using NSubstitute;
 
 namespace MultiTypeParameterGenerator.Tests.UnitTests.Common.Factories.Entities;
 
