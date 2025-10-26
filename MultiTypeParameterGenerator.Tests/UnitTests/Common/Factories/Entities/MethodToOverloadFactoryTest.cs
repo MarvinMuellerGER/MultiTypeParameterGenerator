@@ -360,7 +360,7 @@ public static class MethodToOverloadFactoryTest
         }
 
         [Fact]
-        public void HandlesAccessModifiersAttribute()
+        public void HandlesAccessModifierAttribute()
         {
             // Arrange
             const string code =
@@ -373,7 +373,7 @@ public static class MethodToOverloadFactoryTest
                 {
                     public sealed class SomeClass
                     {
-                        [AccessModifiers(Public)]
+                        [AccessModifier(Public)]
                         protected void SomeMethod() { }
                     }
                 }
@@ -390,7 +390,7 @@ public static class MethodToOverloadFactoryTest
                     }
 
                     [AttributeUsage(AttributeTargets.Method)]
-                    public sealed class AccessModifiersAttribute(AccessModifier accessModifiers) : Attribute;
+                    public sealed class AccessModifierAttribute(AccessModifier accessModifiers) : Attribute;
                 }
                 """;
 
