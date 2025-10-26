@@ -40,10 +40,11 @@ using MultiTypeParameterGenerator;
 
 public partial class Calculator
 {
-    [AccessModifiers(Public)] private T Add<int, [AcceptedTypes<int, double>] T>(int first, T second)
+    [AccessModifiers(Public)] private T Add<[AcceptedTypes<int, double>] T>(int first, T second)
     {
         // Implementation
-        return first + second;
+        var result = first + Convert.ToDouble(second);
+        return (T)Convert.ChangeType(result, typeof(T));
     }
 }
 ```
@@ -90,10 +91,11 @@ If you add summary comments they will not get lost:
 /// <typeparam name="T1">Type of first summand</typeparam>
 /// <typeparam name="T2">Type of second summand</typeparam>
 /// <returns>sum of both values</returns>
-private T Add<int, [AcceptedTypes<int, double>] T>(int first, T second)
+private T Add<[AcceptedTypes<int, double>] T>(int first, T second)
 {
     // Implementation
-    return first + second;
+    var result = first + Convert.ToDouble(second);
+    return (T)Convert.ChangeType(result, typeof(T));
 }
 ```
 
@@ -165,16 +167,18 @@ using AcceptedTypesOfCalculator = AcceptedTypesCollection<int, double>
 
 public partial class Calculator
 {
-    public T Add<int, [AcceptedTypes<AcceptedTypesOfCalculator>] T>(int first, T second)
+    public T Add<[AcceptedTypes<AcceptedTypesOfCalculator>] T>(int first, T second)
     {
         // Implementation
-        return first + second;
+        var result = first + Convert.ToDouble(second);
+        return (T)Convert.ChangeType(result, typeof(T));
     }
 
-    public T Subtract<int, [AcceptedTypes<AcceptedTypesOfCalculator>] T>(int first, T second)
+    public T Subtract<[AcceptedTypes<AcceptedTypesOfCalculator>] T>(int first, T second)
     {
         // Implementation
-        return first - second;
+        var result = first - Convert.ToDouble(second);
+        return (T)Convert.ChangeType(result, typeof(T));
     }
 }
 
@@ -215,7 +219,7 @@ The attribute to specify which access modifiers that the generate overloads will
 Basic syntax:
 
 ``` csharp
-[AccessModifiers(AccessModifiers: MultiTypeParameterGenerator.Public)]
+[AccessModifiers(AccessModifiers: MultiTypeParameterGenerator.AccessModifier)]
 ```
 
 Parameters:
