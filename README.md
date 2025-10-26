@@ -31,6 +31,9 @@ Or add it directly to your `.csproj` file:
 
 ## Usage
 
+_**Note:**_ _The following examples are simplified for the sake of brevity. For a more real-world example, see the
+[example use case](#example-use-case-real-world) at the end of this document._
+
 ### Basic Example
 
 Add an `[AccessModifiers]` attribute to your method and an `[AcceptedTypes]` attribute to your generic type parameter:
@@ -160,7 +163,8 @@ public void Handle<[AcceptedTypes<Foo, string, FooBar>(true)] T>(T data)
 
 #### Shared Accepted Type Collections
 
-If you need the same accepted types for multiple methods, you do not need to specify them multiple times. Simply use an AcceptedTypesCollection and give it a (global) type alias:
+If you need the same accepted types for multiple methods, you do not need to specify them multiple times. Simply use an
+AcceptedTypesCollection and give it a (global) type alias:
 
 ``` csharp
 using AcceptedTypesOfCalculator = AcceptedTypesCollection<int, double>
@@ -242,33 +246,110 @@ Example:
 [AccessModifier(ProtectedInternal)] private void Foo<[AcceptedTypes<int, double>] T>(T value);
 ```
 
-## Example Use Cases
+## Example Use Case (Real-World)
 
-### Numerical Operations
+Finally, a real-world scenario as the examples above are very simple and sterile...
+
+### [Apache Kafka](https://kafka.apache.org) Producer
+
+Let's say you want to create a wrapper around
+the [Confluent.Kafka.IProducer<TKey, TValue>](https://docs.confluent.io/platform/current/clients/confluent-kafka-dotnet/_site/api/Confluent.Kafka.IProducer-2.html):
 
 ``` csharp
-public class MathUtility
+namespace Kafka;
+
+public sealed interface IKafkaProducer
 {
-    public T Square<[AcceptedTypes<int, double, decimal>] T>(T value)
+    /// <summary>
+    /// Send a message to the specified topic.
+    /// </summary>
+    /// <param name="topic">The topic to send the Kafka message to</param>
+    /// <param name="key">The key of the Kafka message</param>
+    /// <param name="value">The value of the Kafka message. If the value is 'null', then a Kafka tombstone message will be produced.</param>
+    /// <param name="cancellationToken">CancellationToken</param>
+    /// <typeparam name="TKey">Key type of the message</typeparam>
+    /// <typeparam name="TValue">Value type of the message</typeparam>
+    Task ProduceAsync<TKey, TValue>(string topic, TKey key, TValue value, CancellationToken cancellationToken = default);
+}
+
+internal sealed class KafkaProducer(IServiceProvider serviceProvider) : IKafkaProducer
+{
+    public async Task ProduceAsync<TKey, TValue>(string topic, TKey key, TValue value, CancellationToken cancellationToken)
     {
-        // Implementation
-        return value * value;
+        var producer = serviceProvider.GetRequiredService<IProducer<TKey, TValue>>();
+        var message = new Message<TKey, TValue> { Key = key, Value = value };
+
+        return await producer.ProduceAsync(topic, message, cancellationToken);
     }
 }
 ```
 
-### String Handling
+With the implementation above you accept any type for the key and value. But that doesn't mean that it will work with
+each.
+If you provide key or value in any not following mentioned type you will get this exception at runtime:
+`System.InvalidOperationException: AvroSerializer only accepts type parameters of int, bool, double, string, float, long, byte[], instances of ISpecificRecord and subclasses of SpecificFixed.`
+
+To avoid this and make it typesafe at compile time, you can use the MultiTypeParameterGenerator to generate overloads
+for all supported types:
 
 ``` csharp
-public class StringProcessor
+namespace Kafka;
+
+using MultiTypeParameterGenerator;
+using KafkaAcceptedTypes = AcceptedTypesCollection<int, bool, double, string, float, long, byte[], ISpecificRecord, GenericType<SpecificFixed>>;
+
+[AccessModifiers(Public)]
+public partial sealed interface IKafkaProducer
 {
-    public string Normalize<[AcceptedTypes<string, char[]>] T>(T input)
+    /// <summary>
+    /// Send a message to the specified topic.
+    /// </summary>
+    /// <param name="topic">The topic to send the Kafka message to</param>
+    /// <param name="key">The key of the Kafka message</param>
+    /// <param name="value">The value of the Kafka message. If the value is 'null', then a Kafka tombstone message will be produced.</param>
+    /// <param name="cancellationToken">CancellationToken</param>
+    /// <typeparam name="TKey">Key type of the message</typeparam>
+    /// <typeparam name="TValue">Value type of the message</typeparam>
+    protected Task ProduceAsync<[AcceptedTypes<KafkaAcceptedTypes>] TKey, [AcceptedTypes<KafkaAcceptedTypes>] TValue>(string topic, TKey key, TValue value, CancellationToken cancellationToken = default);
+}
+
+internal sealed class KafkaProducer(IServiceProvider serviceProvider) : IKafkaProducer
+{
+    protected async Task ProduceAsync<TKey, TValue>(string topic, TKey key, TValue value, CancellationToken cancellationToken)
     {
-        // Implementation
-        return input.ToString();
+        var producer = serviceProvider.GetRequiredService<IProducer<TKey, TValue>>();
+        var message = new Message<TKey, TValue> { Key = key, Value = value };
+
+        return await producer.ProduceAsync(topic, message, cancellationToken);
     }
 }
 ```
+
+This will generate many overloads for the `ProduceAsync` method to accept all but only the specified types:
+
+``` csharp
+partial interface IKafkaProducer
+{
+    /// <inheritdoc cref="ProduceAsync{TKey, TValue}(string, TKey, TValue, CancellationToken)" />
+    public Task ProduceAsync(string topic, int key, int value, CancellationToken cancellationToken = default)
+        => ProduceAsync<int, int>(topic, key, value, cancellationToken);
+
+    /// <inheritdoc cref="ProduceAsync{TKey, TValue}(string, TKey, TValue, CancellationToken)" />
+    public Task ProduceAsync(string topic, int key, bool value, CancellationToken cancellationToken = default)
+        => ProduceAsync<int, bool>(topic, key, value, cancellationToken);
+
+    ...
+
+    /// <inheritdoc cref="ProduceAsync{TKey, TValue}(string, TKey, TValue, CancellationToken)" />
+    public Task ProduceAsync<TSpecificFixed>(string topic, int TSpecificFixed, float value, CancellationToken cancellationToken = default)
+        where TSpecificFixed : SpecificFixed
+        => ProduceAsync<int, TSpecificFixed>(topic, key, value, cancellationToken);
+}
+```
+
+Now your `ProduceAsync` method can only be called with the supported types for key and value, making your API type-safe
+and preventing runtime errors! 🥳
+And for all of that you didn't have to write loads of boiler code (81 method overloads to be exact)! 😎
 
 ## Performance Considerations
 
