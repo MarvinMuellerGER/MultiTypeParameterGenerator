@@ -7,7 +7,6 @@ using MultiTypeParameterGenerator.Common.Models.TypedValues;
 
 namespace MultiTypeParameterGenerator.Analysis.Factories.Collections;
 
-using Key = (GenericType AffectedGenericType, int OtherAcceptedTypesHashCode);
 using TypeCombinationItem = (GenericType GenericType, AcceptedType AcceptedType);
 
 internal sealed class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCombinationCollectionFactory
@@ -15,18 +14,15 @@ internal sealed class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCo
     public AcceptedTypeCombinationCollection Create(MethodToOverload methodToOverload)
     {
         var typeCombinations = GetTypeCombinations(methodToOverload);
-        var countByShortNameOfAcceptedTypeByAffectedGenericType = new Dictionary<Key, Dictionary<SourceCode, int>>();
-        var countByAllUseTypeConstraints = 0;
+        var globalTracker = new GlobalTypeCountTracker();
 
+        // First pass: create combinations with type indices
         var combinations = typeCombinations
-            .Select(combination => CreateAcceptedTypeCombination(
-                combination,
-                countByShortNameOfAcceptedTypeByAffectedGenericType))
-            .SelectToReadonlyList(combination => TrackAllTypeConstraintsCombinations(
-                combination,
-                ref countByAllUseTypeConstraints));
+            .Select(combination => CreateAcceptedTypeCombination(combination, globalTracker))
+            .ToList();
 
-        return new(combinations);
+        // Second pass: assign indices for combinations where all types use constraints
+        return new(AssignConstraintCombinationIndices(combinations));
     }
 
     private static IEnumerable<IReadOnlyList<TypeCombinationItem>> GetTypeCombinations(
@@ -40,127 +36,136 @@ internal sealed class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCo
     }
 
     private static AcceptedTypeCombination CreateAcceptedTypeCombination(
-        IReadOnlyList<TypeCombinationItem> acceptedTypeList,
-        Dictionary<Key, Dictionary<SourceCode, int>> countByShortNameOfAcceptedTypeByAffectedGenericType)
+        IReadOnlyList<TypeCombinationItem> combination,
+        GlobalTypeCountTracker globalTracker)
     {
-        var countByGenericAcceptedType = new Dictionary<SourceCode, int>();
+        var combinationTracker = new CombinationTypeCountTracker(combination);
 
-        var acceptedTypesForGenericTypes = acceptedTypeList.SelectToReadonlyList(item =>
-            CreateAcceptedTypeForAffectedGenericType(
-                item,
-                acceptedTypeList,
-                countByShortNameOfAcceptedTypeByAffectedGenericType,
-                countByGenericAcceptedType));
+        var acceptedTypesForGenericTypes = combination.SelectToReadonlyList(item =>
+            CreateAcceptedTypeForAffectedGenericType(item, combination, globalTracker, combinationTracker));
 
         return new(acceptedTypesForGenericTypes);
     }
 
     private static AcceptedTypeForAffectedGenericType CreateAcceptedTypeForAffectedGenericType(
         TypeCombinationItem item,
-        IReadOnlyList<TypeCombinationItem> acceptedTypeList,
-        Dictionary<Key, Dictionary<SourceCode, int>> countByShortNameOfAcceptedTypeByAffectedGenericType,
-        Dictionary<SourceCode, int> countByGenericAcceptedType)
+        IReadOnlyList<TypeCombinationItem> combination,
+        GlobalTypeCountTracker globalTracker,
+        CombinationTypeCountTracker combinationTracker)
     {
         var (genericType, acceptedType) = item;
-        var key = CreateContextKey(acceptedTypeList, item);
+        var shortTypeName = acceptedType.Type.ShortenedSourceCodeWithoutContainingType;
 
-        var countByShortNameOfAcceptedType = countByShortNameOfAcceptedTypeByAffectedGenericType
-            .GetValueOrDefault(key, out var isNotFirstOccurrence, new())!;
+        var contextKey = CreateContextKey(combination, item);
+        var isFirstOccurrence =
+            globalTracker.TrackOccurrence(contextKey, shortTypeName, acceptedType.UseTypeConstraint);
 
-        var shortAcceptedTypeName = acceptedType.Type.ShortenedSourceCodeWithoutContainingType;
+        if (acceptedType.UseTypeConstraint) combinationTracker.IncrementCount(shortTypeName);
 
-        if (acceptedType.UseTypeConstraint)
+        var updatedAcceptedType = acceptedType with
         {
-            UpdateTypeCounts(
-                countByShortNameOfAcceptedType,
-                countByGenericAcceptedType,
-                shortAcceptedTypeName);
-
-            countByShortNameOfAcceptedTypeByAffectedGenericType[key] = countByShortNameOfAcceptedType;
-        }
-
-        var updatedAcceptedType = UpdateAcceptedTypeIndices(
-            acceptedType,
-            shortAcceptedTypeName,
-            acceptedTypeList,
-            countByShortNameOfAcceptedType,
-            countByGenericAcceptedType);
-
-        return new(
-            genericType,
-            updatedAcceptedType,
-            isNotFirstOccurrence);
-    }
-
-    private static void UpdateTypeCounts(
-        Dictionary<SourceCode, int> countByShortNameOfAcceptedType,
-        Dictionary<SourceCode, int> countByGenericAcceptedType,
-        SourceCode shortAcceptedTypeName)
-    {
-        countByShortNameOfAcceptedType[shortAcceptedTypeName] =
-            countByShortNameOfAcceptedType.GetValueOrDefault(shortAcceptedTypeName) + 1;
-
-        countByGenericAcceptedType[shortAcceptedTypeName] =
-            countByGenericAcceptedType.GetValueOrDefault(shortAcceptedTypeName) + 1;
-    }
-
-    private static AcceptedType UpdateAcceptedTypeIndices(
-        AcceptedType acceptedType,
-        SourceCode shortAcceptedTypeName,
-        IReadOnlyList<TypeCombinationItem> acceptedTypeList,
-        Dictionary<SourceCode, int> countByShortNameOfAcceptedType,
-        Dictionary<SourceCode, int> countByGenericAcceptedType)
-    {
-        var indexOfParametersWithSameType = countByGenericAcceptedType.GetValueOrDefault(shortAcceptedTypeName);
-        var indexOfParametersWithSameShortTypeName = CalculateShortTypeNameIndex(
-            acceptedTypeList,
-            countByShortNameOfAcceptedType,
-            shortAcceptedTypeName);
-
-        return acceptedType with
-        {
-            IndexOfParametersWithSameType = indexOfParametersWithSameType,
-            IndexOfParametersWithSameShortTypeName = indexOfParametersWithSameShortTypeName
+            IndexOfParametersWithSameType = combinationTracker.GetCount(shortTypeName),
+            IndexOfParametersWithSameShortTypeName = CalculateShortTypeNameIndex(
+                combination,
+                globalTracker.GetContextCounts(contextKey),
+                shortTypeName)
         };
+
+        return new(genericType, updatedAcceptedType, !isFirstOccurrence);
     }
 
     private static int CalculateShortTypeNameIndex(
-        IReadOnlyList<TypeCombinationItem> acceptedTypeList,
-        Dictionary<SourceCode, int> countByShortNameOfAcceptedType,
-        SourceCode shortAcceptedTypeName)
+        IReadOnlyList<TypeCombinationItem> combination,
+        Dictionary<SourceCode, int> contextCounts,
+        SourceCode shortTypeName)
     {
-        var hasMultipleTypesWithSameName = countByShortNameOfAcceptedType.Count > 1;
-        var hasMultipleTypeConstraints = acceptedTypeList.Count(item => item.AcceptedType.UseTypeConstraint) > 1;
+        var hasMultipleTypesWithSameName = contextCounts.Count > 1;
+        var hasMultipleTypeConstraints = combination.Count(item => item.AcceptedType.UseTypeConstraint) > 1;
 
         return hasMultipleTypesWithSameName || hasMultipleTypeConstraints
-            ? countByShortNameOfAcceptedType.GetValueOrDefault(shortAcceptedTypeName)
+            ? contextCounts.GetValueOrDefault(shortTypeName)
             : 0;
     }
 
-    private static AcceptedTypeCombination TrackAllTypeConstraintsCombinations(
-        AcceptedTypeCombination acceptedTypeCombination,
-        ref int countByAllUseTypeConstraints)
+    private static IReadOnlyList<AcceptedTypeCombination> AssignConstraintCombinationIndices(
+        IEnumerable<AcceptedTypeCombination> combinations)
     {
-        if (!acceptedTypeCombination.AllUseTypeConstraints)
-            return acceptedTypeCombination;
+        var constraintCombinationIndex = 0;
 
-        countByAllUseTypeConstraints++;
-        return acceptedTypeCombination with
+        return combinations.SelectToReadonlyList(combination =>
         {
-            IndexOfCombinationsWhereAllUseTypeConstraints = countByAllUseTypeConstraints
-        };
+            if (!combination.AllUseTypeConstraints)
+                return combination;
+
+            constraintCombinationIndex++;
+            return combination with
+            {
+                IndexOfCombinationsWhereAllUseTypeConstraints = constraintCombinationIndex
+            };
+        });
     }
 
-    private static Key CreateContextKey(
-        IReadOnlyList<TypeCombinationItem> acceptedTypeList,
-        TypeCombinationItem item)
+    private static string CreateContextKey(IReadOnlyList<TypeCombinationItem> combination, TypeCombinationItem item)
     {
-        var otherAcceptedTypesHashCode = acceptedTypeList
+        var otherTypes = combination
             .Except([item])
-            .Select(otherItem => otherItem.AcceptedType.Type.ShortenedSourceCodeExclNullableAnnotation.Value)
-            .Join()
-            .GetHashCode();
+            .Select(other => other.AcceptedType.Type.ShortenedSourceCodeExclNullableAnnotation.Value)
+            .Join();
 
-        return (item.GenericType, otherAcceptedTypesHashCode);
+        return $"{item.GenericType}:{otherTypes.GetHashCode()}";
+    }
+
+    /// <summary>
+    ///     Tracks type counts across all combinations for a specific context (generic type + other types in combination).
+    /// </summary>
+    private sealed class GlobalTypeCountTracker
+    {
+        private readonly Dictionary<string, Dictionary<SourceCode, int>> _countsByContext = new();
+
+        public bool TrackOccurrence(string contextKey, SourceCode shortTypeName, bool useTypeConstraint)
+        {
+            if (!_countsByContext.TryGetValue(contextKey, out var counts))
+            {
+                counts = new();
+                _countsByContext[contextKey] = counts;
+            }
+
+            var isFirstOccurrence = counts.Count == 0;
+
+            if (useTypeConstraint) counts[shortTypeName] = counts.GetValueOrDefault(shortTypeName) + 1;
+
+            return isFirstOccurrence;
+        }
+
+        public Dictionary<SourceCode, int> GetContextCounts(string contextKey) =>
+            _countsByContext.TryGetValue(contextKey, out var counts) ? counts : new();
+    }
+
+    /// <summary>
+    ///     Tracks type counts within a single combination to calculate same-type parameter indices.
+    /// </summary>
+    private sealed class CombinationTypeCountTracker
+    {
+        private readonly Dictionary<SourceCode, int> _counts = new();
+
+        public CombinationTypeCountTracker(IReadOnlyList<TypeCombinationItem> combination)
+        {
+            // Pre-calculate counts for all types with constraints in this combination
+            foreach (var (_, acceptedType) in combination)
+            {
+                if (!acceptedType.UseTypeConstraint)
+                    continue;
+
+                var shortTypeName = acceptedType.Type.ShortenedSourceCodeWithoutContainingType;
+                _counts[shortTypeName] = 0;
+            }
+        }
+
+        public void IncrementCount(SourceCode shortTypeName)
+        {
+            _counts[shortTypeName] = _counts.GetValueOrDefault(shortTypeName) + 1;
+        }
+
+        public int GetCount(SourceCode shortTypeName) => _counts.GetValueOrDefault(shortTypeName);
     }
 }

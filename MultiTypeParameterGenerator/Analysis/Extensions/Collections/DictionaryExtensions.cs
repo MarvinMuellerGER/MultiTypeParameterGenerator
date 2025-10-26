@@ -11,12 +11,5 @@ internal static class DictionaryExtensions
 
     internal static TValue? GetValueOrDefault<TKey, TValue>(
         this IDictionary<TKey, TValue> dictionary, TKey key, TValue? defaultValue = default) =>
-        GetValueOrDefault(dictionary, key, out _, defaultValue);
-
-    internal static TValue? GetValueOrDefault<TKey, TValue>(
-        this IDictionary<TKey, TValue> dictionary, TKey key, out bool alreadyExisted, TValue? defaultValue = default)
-    {
-        alreadyExisted = dictionary.TryGetValue(key, out var value);
-        return alreadyExisted ? value : defaultValue;
-    }
+        dictionary.TryGetValue(key, out var value) ? value : defaultValue;
 }
