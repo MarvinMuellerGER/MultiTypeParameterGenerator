@@ -40,7 +40,7 @@ using MultiTypeParameterGenerator;
 
 public partial class Calculator
 {
-    [AccessModifiers(Public)] private T Add<[AcceptedTypes<int, double>] T>(int first, T second)
+    [AccessModifier(Public)] private T Add<[AcceptedTypes<int, double>] T>(int first, T second)
     {
         // Implementation
         var result = first + Convert.ToDouble(second);
@@ -204,27 +204,27 @@ Basic syntax:
 Parameters:
 
 - Generic type parameters: Types to generate overloads for
-- (optional) `AsGenericTypes`: Whether all provided reference types should be treated as generic type arguments
-- (optional) `AdditionalTypes`: Additional type names as strings
+- (optional) `asGenericTypes`: Whether all provided reference types should be treated as generic type arguments
+- (optional) `additionalTypes`: Additional type names as strings
 
 Example:
 
 ``` csharp
-[AcceptedTypes<int, double>(AsGenericTypes: false, AdditionalTypes: "System.DateTime")]
+[AcceptedTypes<int, double>(asGenericTypes: false, additionalTypes: "System.DateTime")]
 ```
 
-### AccessModifiersAttribute
+### AccessModifierAttribute
 
-The attribute to specify which access modifiers that the generate overloads will have.
+The attribute to specify which access modifier that the generated method overloads will have.
 Basic syntax:
 
 ``` csharp
-[AccessModifiers(AccessModifiers: MultiTypeParameterGenerator.AccessModifier)]
+[AccessModifier(accessModifier: MultiTypeParameterGenerator.AccessModifier)]
 ```
 
 Parameters:
 
-- AccessModifiers: Access modifiers that the generate overloads will have
+- accessModifiers: Access modifiers that the generate overloads will have
   ``` csharp
   public enum AccessModifier
   {
@@ -239,7 +239,7 @@ Parameters:
 Example:
 
 ``` csharp
-[AccessModifiers(ProtectedInternal)] private void Foo<[AcceptedTypes<int, double>] T>(T value);
+[AccessModifier(ProtectedInternal)] private void Foo<[AcceptedTypes<int, double>] T>(T value);
 ```
 
 ## Example Use Cases

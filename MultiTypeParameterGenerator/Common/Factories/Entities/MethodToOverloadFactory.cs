@@ -87,9 +87,9 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
     private static AccessModifierNameCollection GetAccessModifiers(IMethodSymbol method)
     {
         var accessModifiersAttribute = method.GetAttributes()
-            .SingleOrDefault(a => a.AttributeClass?.Name is nameof(AccessModifiersAttribute));
-        var accessModifiersEnum = (AccessModifier?)(int?)accessModifiersAttribute?.ConstructorArguments[0].Value;
+            .SingleOrDefault(a => a.AttributeClass?.Name is nameof(AccessModifierAttribute));
 
+        var accessModifiersEnum = (AccessModifier?)(int?)accessModifiersAttribute?.ConstructorArguments[0].Value;
         List<AccessModifierName> accessModifiers = [];
 
         if (accessModifiersEnum is not null)

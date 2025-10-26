@@ -142,13 +142,13 @@ namespace MultiTypeParameterGenerator.Tests.IntegrationTests
         /// <typeparam name="T2">Test type param 2</typeparam>
         /// <typeparam name="T3">Test type param 3</typeparam>
         /// <returns></returns>
-        [AccessModifiers(Public)]
-    // @formatter:off
-    protected (T1 value1, T2 value2, T3[] value3) SomeMethod<
-        [AcceptedTypes<long, byte, char, SomeMoreRecord>(true, TestRecordName, nameof(SomeRecord))] T1,
-        T2, [AcceptedTypes<AcceptedTypesForT3>(true, TestRecordName, nameof(SomeRecord))]
-        T3>
-        (T1 value1, T2 value2, T3[] value3) where T2 : class?, new();
+        [AccessModifier(Public)]
+        // @formatter:off
+        protected (T1 value1, T2 value2, T3[] value3) SomeMethod<
+            [AcceptedTypes<long, byte, char, SomeMoreRecord>(true, TestRecordName, nameof(SomeRecord))] T1,
+            T2,
+            [AcceptedTypes<AcceptedTypesForT3>(true, TestRecordName, nameof(SomeRecord))] T3>
+            (T1 value1, T2 value2, T3[] value3) where T2 : class?, new();
         // @formatter:on
 
         public interface ISomeRecord;
@@ -166,7 +166,7 @@ namespace MultiTypeParameterGenerator.Tests.IntegrationTests
 
     public static partial class SomeOtherClass
     {
-        [AccessModifiers(Internal)]
+        [AccessModifier(Internal)]
         private static T SomeMethod<[AcceptedTypes<bool, SomeOtherRecord>] T>(T value) => value;
 
         public record SomeOtherRecord;

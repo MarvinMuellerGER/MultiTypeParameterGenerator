@@ -39,5 +39,5 @@ public enum AccessModifier
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
 #pragma warning disable CS9113 // Parameter is unread.
-public sealed class AccessModifiersAttribute(AccessModifier accessModifiers) : Attribute;
+public sealed class AccessModifierAttribute(AccessModifier accessModifier) : Attribute;
 #pragma warning restore CS9113 // Parameter is unread.
