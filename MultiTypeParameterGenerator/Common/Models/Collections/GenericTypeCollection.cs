@@ -19,15 +19,11 @@ internal sealed record GenericTypeCollection(params IReadOnlyList<GenericType> V
     private GenericTypeCollection Except(GenericTypeCollection other) =>
         new(Values.WhereToReadonlyList(gt => other.Values.All(o => o.Name != gt.Name)));
 
-    internal GenericTypeCollection WithAcceptedTypes(AcceptedTypeCombination acceptedTypeCombination) =>
+    internal GenericTypeCollection WithAcceptedTypes(AcceptedTypeCombination acceptedTypeCombination,
+        bool useFullTypeNames) =>
         acceptedTypeCombination.Values.Aggregate(this,
             (current, acceptedType) => current.Replace(acceptedType.AffectedGenericType,
-                GenericType.FromAcceptedType(acceptedType.AcceptedType)));
-
-    internal GenericTypeCollection WithGenericAcceptedTypes(AcceptedTypeCombination acceptedTypeCombination) =>
-        acceptedTypeCombination.Values.Aggregate(this,
-            (current, acceptedType) => current.Replace(acceptedType.AffectedGenericType,
-                GenericType.FromAcceptedType(acceptedType.AcceptedType)));
+                GenericType.FromAcceptedType(acceptedType.AcceptedType, useFullTypeNames)));
 
     private GenericTypeCollection Replace(GenericType valueToReplace, GenericType newValue)
     {

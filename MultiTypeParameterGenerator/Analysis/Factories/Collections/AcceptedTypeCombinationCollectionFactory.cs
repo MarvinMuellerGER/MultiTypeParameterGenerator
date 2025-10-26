@@ -13,7 +13,7 @@ internal sealed class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCo
 {
     public AcceptedTypeCombinationCollection Create(MethodToOverload methodToOverload)
     {
-        var isNotFirstGenericAcceptedTypeByAffectedGenericType = new Dictionary<Key, bool>();
+        var countByShortNameOfAcceptedTypeByAffectedGenericType = new Dictionary<Key, Dictionary<SourceCode, int>>();
         var countByAllUseTypeConstraints = 0;
 
         return new(methodToOverload.AffectedGenericTypes.Values.ToDictionary(
@@ -30,25 +30,35 @@ internal sealed class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCo
                         var acceptedType = item.Item2;
 
                         var key = GetKey(acceptedTypeList, item);
+                        var countByShortNameOfAcceptedType =
+                            countByShortNameOfAcceptedTypeByAffectedGenericType.GetValueOrDefault(
+                                key, out var isNotFirstGenericAcceptedType, new())!;
 
-                        var isNotFirstGenericAcceptedType =
-                            isNotFirstGenericAcceptedTypeByAffectedGenericType.GetValueOrDefault(key);
-
+                        var shortAcceptedTypeName = acceptedType.Type.ShortenedSourceCodeWithoutContainingType;
                         if (acceptedType.UseTypeConstraint)
                         {
-                            isNotFirstGenericAcceptedTypeByAffectedGenericType[key] = true;
+                            countByShortNameOfAcceptedType[shortAcceptedTypeName] =
+                                countByShortNameOfAcceptedType.GetValueOrDefault(shortAcceptedTypeName) + 1;
 
-                            countByGenericAcceptedType[acceptedType.Type.ShortenedSourceCodeWithoutContainingType] =
-                                countByGenericAcceptedType.GetValueOrDefault(acceptedType.Type.ShortenedSourceCodeWithoutContainingType) + 1;
+                            countByShortNameOfAcceptedTypeByAffectedGenericType[key] = countByShortNameOfAcceptedType;
+                            
+                            countByGenericAcceptedType[shortAcceptedTypeName] =
+                                countByGenericAcceptedType.GetValueOrDefault(shortAcceptedTypeName) + 1;
                         }
 
                         return new AcceptedTypeForAffectedGenericType(
-                            affectedGenericType, isNotFirstGenericAcceptedType,
+                            affectedGenericType,
                             acceptedType with
                             {
                                 IndexOfParametersWithSameType =
-                                countByGenericAcceptedType.GetValueOrDefault(acceptedType.Type.ShortenedSourceCodeWithoutContainingType)
-                            });
+                                countByGenericAcceptedType.GetValueOrDefault(shortAcceptedTypeName),
+
+                                IndexOfParametersWithSameShortTypeName =
+                                countByShortNameOfAcceptedType.Count > 1 ||
+                                acceptedTypeList.Count(a => a.Item2.UseTypeConstraint) > 1
+                                    ? countByShortNameOfAcceptedType.GetValueOrDefault(shortAcceptedTypeName)
+                                    : 0
+                            }, isNotFirstGenericAcceptedType);
                     }));
             }).SelectToReadonlyList(acceptedTypeCombination =>
             {
@@ -66,5 +76,6 @@ internal sealed class AcceptedTypeCombinationCollectionFactory : IAcceptedTypeCo
     private static Key GetKey(
         IReadOnlyList<(GenericType, AcceptedType)> acceptedTypeList, (GenericType, AcceptedType) item) =>
         (item.Item1, acceptedTypeList.Except([item])
-            .Select(otherAcceptedType => otherAcceptedType.Item2.ShortName.Value).Join().GetHashCode());
+            .Select(otherAcceptedType => otherAcceptedType.Item2.Type.ShortenedSourceCodeExclNullableAnnotation.Value)
+            .Join().GetHashCode());
 }

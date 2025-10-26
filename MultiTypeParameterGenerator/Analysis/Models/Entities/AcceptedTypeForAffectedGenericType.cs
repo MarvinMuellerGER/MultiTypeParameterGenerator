@@ -4,5 +4,5 @@ namespace MultiTypeParameterGenerator.Analysis.Models.Entities;
 
 internal record AcceptedTypeForAffectedGenericType(
     GenericType AffectedGenericType,
-    bool IsNotFirstGenericAcceptedType,
-    AcceptedType AcceptedType);
+    AcceptedType AcceptedType,
+    bool IsNotFirstGenericAcceptedType);

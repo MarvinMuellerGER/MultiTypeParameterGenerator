@@ -26,11 +26,11 @@ public static class MethodSourceCodeFactoryTest
                 new(new(new("T1")), new(new("T2"))),
                 new(
                     new(new(new("T1")), new(
-                        new(new NamedType(new(null, new("bool"))), false),
-                        new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true))),
+                        new(new NamedType(new(null, new("bool"))), false, false),
+                        new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true, false))),
                     new(new(new("T2")), new(
-                        new(new NamedType(new(null, new("int")), null, new(), true), false),
-                        new(new NamedType(new(null, new("SomeRecord"))), true)))),
+                        new(new NamedType(new(null, new("int")), null, new(), true), false, false),
+                        new(new NamedType(new(null, new("SomeRecord"))), true, false)))),
                 new(
                     new(new NamedType(new(null, new("int"))), new("firstParam")),
                     new(new NamedType(new(null, new("T1"))), new("secondParam")),
@@ -38,14 +38,14 @@ public static class MethodSourceCodeFactoryTest
 
             var acceptedTypeCombinationCollection =
                 new AcceptedTypeCombinationCollection(
-                    new(new(new(new("T1")), false, new(new NamedType(new(null, new("bool"))), false, 1)),
-                        new(new(new("T2")), false, new(new NamedType(new(null, new("int")), null, new(), true), false, 1))),
-                    new(new(new(new("T1")), false, new(new NamedType(new(null, new("bool"))), false, 1)),
-                        new(new(new("T2")), false, new(new NamedType(new(null, new("SomeRecord"))), true, 1))),
-                    new(new(new(new("T1")), false, new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true, 1)),
-                        new(new(new("T2")), false, new(new NamedType(new(null, new("int")), null, new(), true), false, 1))),
-                    new(new(new(new("T1")), false, new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true, 1)),
-                        new(new(new("T2")), false, new(new NamedType(new(null, new("SomeRecord"))), true, 2))));
+                    new(new(new(new("T1")), new(new NamedType(new(null, new("bool"))), false, false, 1), false),
+                        new(new(new("T2")), new(new NamedType(new(null, new("int")), null, new(), true), false, false, 1), false)),
+                    new(new(new(new("T1")), new(new NamedType(new(null, new("bool"))), false, false, 1), false),
+                        new(new(new("T2")), new(new NamedType(new(null, new("SomeRecord"))), true, false, 1), false)),
+                    new(new(new(new("T1")), new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true, false, 1), false),
+                        new(new(new("T2")), new(new NamedType(new(null, new("int")), null, new(), true), false, false, 1), false)),
+                    new(new(new(new("T1")), new(new NamedType(new(null, new("SomeRecord")), null, new(), true), true, false, 1), false),
+                        new(new(new("T2")), new(new NamedType(new(null, new("SomeRecord"))), true, false, 2), false)));
 
             var acceptedTypeCombinationCollectionFactory = Substitute.For<IAcceptedTypeCombinationCollectionFactory>();
             acceptedTypeCombinationCollectionFactory.Create(methodToOverload)

@@ -7,6 +7,6 @@ internal sealed class ParameterCollectionFactory : IParameterCollectionFactory
 {
     public ParameterCollection Create(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
-        methodToOverload.Parameters.WithAcceptedTypes(acceptedTypeCombination)
+        methodToOverload.Parameters.WithAcceptedTypes(acceptedTypeCombination, methodToOverload.UseFullTypeNames)
             .WithThisParameterIfNecessary(methodToOverload);
 }

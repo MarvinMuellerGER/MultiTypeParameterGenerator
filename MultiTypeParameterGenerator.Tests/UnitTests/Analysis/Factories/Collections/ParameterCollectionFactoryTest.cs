@@ -25,7 +25,7 @@ public static class ParameterCollectionFactoryTest
 
             var acceptedTypeCombination =
                 new AcceptedTypeCombination([
-                    new(new(new("T1")), false, new(new NamedType(new(null, new("int"))), false))
+                    new(new(new("T1")), new(new NamedType(new(null, new("int"))), false, false), false)
                 ]);
 
             // Act

@@ -27,7 +27,7 @@ public static class GenericTypeCollectionTest
             // Arrange
             var collection = new GenericTypeCollection(new(new("T1")), new(new("T2")));
             var toExclude = new AcceptedTypeCombination(
-                [new(new(new("T1")), false, new(new NamedType(new(null, new("bool"))), false))]
+                [new(new(new("T1")), new(new NamedType(new(null, new("bool"))), false, false), false)]
             );
 
             // Act

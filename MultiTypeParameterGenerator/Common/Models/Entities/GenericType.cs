@@ -16,7 +16,11 @@ internal sealed record GenericType(GenericTypeName Name, TypeConstraint? Constra
 
     public override string ToString() => Name.ToString();
 
-    internal static GenericType FromAcceptedType(AcceptedType acceptedType) =>
+    internal static GenericType FromAcceptedType(AcceptedType acceptedType, bool useFullTypeNames) =>
         new(new(acceptedType.TypeNameForSourceCode.Value),
-            acceptedType.UseTypeConstraint ? new(new(acceptedType.TypeNameInclNullableAnnotation.Value)) : null);
+            acceptedType.UseTypeConstraint
+                ? new(new(useFullTypeNames
+                    ? acceptedType.Type.SourceCode.Value
+                    : acceptedType.Type.ShortenedSourceCode.Value))
+                : null);
 }

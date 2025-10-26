@@ -6,17 +6,20 @@ namespace MultiTypeParameterGenerator.Analysis.Models.Entities;
 internal sealed record AcceptedType(
     Type Type,
     bool UseTypeConstraint,
-    int IndexOfParametersWithSameType = 0)
+    bool UseFullTypeName,
+    int IndexOfParametersWithSameType = 0,
+    int IndexOfParametersWithSameShortTypeName = 0)
 {
-    internal TypeName ShortName => new(Type.ShortenedSourceCodeExclNullableAnnotation.Value);
-
-    internal SourceCode TypeNameInclNullableAnnotation => Type.ShortenedSourceCode;
-
-    internal SourceCode NameForMethodName => Type.ShortenedSourceCodeWithoutContainingType;
+    internal SourceCode NameForMethodName => new(Type.ShortenedSourceCodeWithoutContainingType +
+                                                 (IndexOfParametersWithSameShortTypeName > 1
+                                                     ? $"_{IndexOfParametersWithSameShortTypeName}"
+                                                     : string.Empty));
 
     internal SourceCode TypeNameForSourceCode =>
         UseTypeConstraint
             ? new($"T{Type.ShortenedSourceCodeWithoutContainingType}" +
                   (IndexOfParametersWithSameType > 1 ? $"_{IndexOfParametersWithSameType}" : string.Empty))
-            : TypeNameInclNullableAnnotation;
+            : UseFullTypeName
+                ? Type.SourceCode
+                : Type.ShortenedSourceCode;
 }

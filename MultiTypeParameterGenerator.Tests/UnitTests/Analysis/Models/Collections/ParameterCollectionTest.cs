@@ -46,11 +46,11 @@ public static class ParameterCollectionTest
                 new(new GenericTypeParameter(new(null, new("T2"))), new("p2")));
 
             var combination = new AcceptedTypeCombination(
-                new(new(new("T1")), false, new(new NamedType(new(null, new("bool")), null, new(), true), false)),
-                new(new(new("T2")), false, new(new NamedType(new(null, new("SomeRecord"))), true)));
+                new(new(new("T1")), new(new NamedType(new(null, new("bool")), null, new(), true), false, false), false),
+                new(new(new("T2")), new(new NamedType(new(null, new("SomeRecord"))), true, false), false));
 
             // Act
-            var updated = collection.WithAcceptedTypes(combination);
+            var updated = collection.WithAcceptedTypes(combination, false);
 
             // Assert
             var firstParam = updated.Values[0];

@@ -37,7 +37,7 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
             GetReturnType(method),
             GetMethodName(method),
             GetGenericTypes(method),
-            GetAffectedGenericTypes(method),
+            GetAffectedGenericTypes(method, useFullTypeNames),
             GetParameters(method));
     }
 
@@ -123,15 +123,16 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
                 tp.HasUnmanagedTypeConstraint,
                 tp.HasConstructorConstraint))));
 
-    private AcceptedTypesForAffectedGenericTypeCollection GetAffectedGenericTypes(IMethodSymbol method) =>
+    private AcceptedTypesForAffectedGenericTypeCollection GetAffectedGenericTypes(
+        IMethodSymbol method, bool useFullTypeName) =>
         new(method.TypeParameters.Select(typeParameter => new AcceptedTypesForAffectedGenericType(
-                new(new(typeParameter.Name)), GetAcceptedTypes(typeParameter)))
+                new(new(typeParameter.Name)), GetAcceptedTypes(typeParameter, useFullTypeName)))
             .WhereToReadonlyList(affectedGenericType => affectedGenericType.AcceptedTypes.Values.Any()));
 
-    private AcceptedTypeCollection GetAcceptedTypes(ITypeParameterSymbol typeParameter)
+    private AcceptedTypeCollection GetAcceptedTypes(ITypeParameterSymbol typeParameter, bool useFullTypeName)
     {
         var (types, asGenericTypes) = GetAcceptedTypesAttributeInformation(typeParameter);
-        return new(types.SelectToReadonlyList(tp => GetAcceptedType(tp, asGenericTypes)));
+        return new(types.SelectToReadonlyList(tp => GetAcceptedType(tp, asGenericTypes, useFullTypeName)));
     }
 
     private static (IReadOnlyList<ITypeSymbol> Types, bool AsGenericTypes) GetAcceptedTypesAttributeInformation(
@@ -214,7 +215,7 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
         }
     }
 
-    private AcceptedType GetAcceptedType(ITypeSymbol type, bool asGenericType)
+    private AcceptedType GetAcceptedType(ITypeSymbol type, bool asGenericType, bool useFullTypeName)
     {
         if (IsGenericType(type))
         {
@@ -222,7 +223,10 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
             type = GetTypeArguments(type)[0];
         }
 
-        return new(typeFactory.Create(type), asGenericType && type is { IsReferenceType: true, IsSealed: false });
+        return new(
+            typeFactory.Create(type),
+            asGenericType && type is { IsReferenceType: true, IsSealed: false },
+            useFullTypeName);
     }
 
     private static bool IsAcceptedTypeCollection(ITypeSymbol type) =>

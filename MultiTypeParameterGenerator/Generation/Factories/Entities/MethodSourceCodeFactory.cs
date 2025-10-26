@@ -68,18 +68,14 @@ internal sealed class MethodSourceCodeFactory(
                 acceptedType is { IsNotFirstGenericAcceptedType: true, AcceptedType.UseTypeConstraint: true })
             .WithIsFirst()
             .Select(tuple => $"_{(tuple.IsFirst ? "With" : "And")}{tuple.Item.AcceptedType.NameForMethodName}")
-            .Join(string.Empty)}{GetMethodOverloadNamePrefix(acceptedTypeCombination)}");
-
-    private static SourceCode GetMethodOverloadNamePrefix(AcceptedTypeCombination acceptedTypeCombination) =>
-        acceptedTypeCombination.IndexOfCombinationsWhereAllUseTypeConstraints > 1
-            ? new($"_{acceptedTypeCombination.IndexOfCombinationsWhereAllUseTypeConstraints}")
-            : new();
+            .Join(string.Empty)}");
 
     private SourceCode GetTypeParametersAndParametersAndTypeConstraintsSourceCode(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination)
     {
         var genericTypes = methodToOverload.GenericTypes
-            .ExceptNoneGenericAcceptedTypes(acceptedTypeCombination).WithGenericAcceptedTypes(acceptedTypeCombination);
+            .ExceptNoneGenericAcceptedTypes(acceptedTypeCombination)
+            .WithAcceptedTypes(acceptedTypeCombination, methodToOverload.UseFullTypeNames);
         var parameters = parameterCollectionFactory.Create(methodToOverload, acceptedTypeCombination);
 
         return new(
@@ -103,7 +99,7 @@ internal sealed class MethodSourceCodeFactory(
 
     private static GenericTypeCollection GetTypeParameters(
         MethodToOverload methodToOverload, AcceptedTypeCombination acceptedTypeCombination) =>
-        methodToOverload.GenericTypes.WithAcceptedTypes(acceptedTypeCombination);
+        methodToOverload.GenericTypes.WithAcceptedTypes(acceptedTypeCombination, methodToOverload.UseFullTypeNames);
 
     private static SourceCode GetParameterNamesSourceCode(MethodToOverload methodToOverload) =>
         methodToOverload.Parameters.NamesSourceCode;
