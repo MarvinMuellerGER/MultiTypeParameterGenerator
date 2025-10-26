@@ -5,6 +5,7 @@ using MultiTypeParameterGenerator.Tests.IntegrationTests.OtherNamespace;
 namespace MultiTypeParameterGenerator.Tests.IntegrationTests
 {
     using static AccessModifier;
+    using AcceptedTypesForT3 = AcceptedTypesCollection<string, int, bool>;
 
     public static class Generator
     {

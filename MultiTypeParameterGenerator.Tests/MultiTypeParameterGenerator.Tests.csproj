@@ -22,23 +22,23 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AwesomeAssertions" Version="8.0.2"/>
-        <PackageReference Include="AwesomeAssertions.Analyzers" Version="0.34.2">
+        <PackageReference Include="AwesomeAssertions" Version="9.2.1" />
+        <PackageReference Include="AwesomeAssertions.Analyzers" Version="9.0.8">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0"/>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
         <PackageReference Include="NSubstitute" Version="5.3.0"/>
-        <PackageReference Include="Verify" Version="28.16.0"/>
+        <PackageReference Include="Verify" Version="31.0.5" />
         <PackageReference Include="Verify.DiffPlex" Version="3.1.2"/>
-        <PackageReference Include="Verify.XunitV3" Version="28.16.0"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
+        <PackageReference Include="Verify.XunitV3" Version="31.0.5" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="xunit.v3" Version="2.0.0"/>
+        <PackageReference Include="xunit.v3" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>
