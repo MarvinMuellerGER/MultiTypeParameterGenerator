@@ -3,7 +3,7 @@ using MultiTypeParameterGenerator.Common.Models.TypedValues;
 
 namespace MultiTypeParameterGenerator.Common.Models.Entities;
 
-internal sealed record GenericType(GenericTypeName Name, TypeConstraint? Constraint = null)
+internal sealed record GenericType(GenericTypeName Name, TypeConstraint? Constraint = null, bool IsNullable = false)
 {
     internal SourceCode? ConstraintSourceCode =>
         Constraint?.SourceCode is null
@@ -14,13 +14,18 @@ internal sealed record GenericType(GenericTypeName Name, TypeConstraint? Constra
                        where {Name} : {Constraint.SourceCode}
                  """);
 
-    public override string ToString() => Name.ToString();
+    private SourceCode NameInclNullableAnnotation => new($"{Name}{NullableAnnotation}");
 
-    internal static GenericType FromAcceptedType(AcceptedType acceptedType, bool useFullTypeNames) =>
+    private SourceCode NullableAnnotation => IsNullable ? new("?") : new();
+
+    public override string ToString() => NameInclNullableAnnotation.ToString();
+
+    internal static GenericType FromAcceptedType(AcceptedType acceptedType, bool isNullable, bool useFullTypeNames) =>
         new(new(acceptedType.TypeNameForSourceCode.Value),
             acceptedType.UseTypeConstraint
                 ? new(new(useFullTypeNames
                     ? acceptedType.Type.SourceCode.Value
                     : acceptedType.Type.ShortenedSourceCode.Value))
-                : null);
+                : null,
+            isNullable);
 }

@@ -15,7 +15,7 @@ public static class GenericTypeTest
             var accepted = new AcceptedType(new NamedType(new(null, new("AcceptedValue"))), false, false);
 
             // Act & Assert
-            GenericType.FromAcceptedType(accepted, true).Name.Value.Should().Be("AcceptedValue");
+            GenericType.FromAcceptedType(accepted, false, true).Name.Value.Should().Be("AcceptedValue");
         }
     }
 

@@ -36,12 +36,27 @@ internal abstract record Type(bool IsNullable)
             {
                 ContainedTypes = tupleType.ContainedTypes.WithAcceptedTypes(acceptedTypeCombination)
             },
-            GenericTypeParameter genericTypeParameter => genericTypeParameter with
-            {
-                Name = genericTypeParameter.Name.WithAcceptedTypes(acceptedTypeCombination)
-            },
+            GenericTypeParameter genericTypeParameter =>
+                WithAcceptedTypes(genericTypeParameter, acceptedTypeCombination),
             _ => this
         };
+
+    private static Type WithAcceptedTypes(
+        GenericTypeParameter genericTypeParameter, AcceptedTypeCombination acceptedTypeCombination)
+    {
+        var nameWithAcceptedTypes = genericTypeParameter.Name.WithAcceptedTypes(acceptedTypeCombination);
+
+        return AcceptedTypeIsNamedType(acceptedTypeCombination, genericTypeParameter)
+            ? new NamedType(nameWithAcceptedTypes, genericTypeParameter.IsNullable)
+            : genericTypeParameter with { Name = nameWithAcceptedTypes };
+    }
+
+    private static bool AcceptedTypeIsNamedType(AcceptedTypeCombination acceptedTypeCombination,
+        GenericTypeParameter genericTypeParameter) =>
+        acceptedTypeCombination.Values
+            .FirstOrDefault(acceptedType =>
+                acceptedType.AffectedGenericType.Name.Value == genericTypeParameter.Name.TypeName.Value)
+            ?.AcceptedType.Type is NamedType;
 }
 
 internal sealed record NamedType(
@@ -52,6 +67,9 @@ internal sealed record NamedType(
 {
     internal NamedType(FullTypeName Name, NamedType? ContainingType = null) :
         this(Name, ContainingType, new(), false) { }
+
+    internal NamedType(FullTypeName Name, bool IsNullable) :
+        this(Name, null, new(), IsNullable) { }
 
     internal override FullTypeNameCollection FullTypeNames =>
         TypeArguments.FullTypeNames.ConcatDistinct(Name);

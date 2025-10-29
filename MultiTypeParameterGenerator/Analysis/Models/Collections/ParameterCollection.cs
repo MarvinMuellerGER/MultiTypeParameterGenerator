@@ -27,6 +27,7 @@ internal sealed record ParameterCollection(params IReadOnlyList<Parameter> Value
 
             return p with
             {
+                Type = withAcceptedTypes,
                 TypeNameForSourceCode =
                 useFullTypeNames ? withAcceptedTypes.SourceCode : withAcceptedTypes.ShortenedSourceCode
             };

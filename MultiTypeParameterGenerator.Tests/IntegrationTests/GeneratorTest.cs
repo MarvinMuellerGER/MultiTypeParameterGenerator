@@ -18,7 +18,6 @@ namespace MultiTypeParameterGenerator.Tests.IntegrationTests
 #pragma warning disable CA1859
                 ISomeClass<bool> someClass = new SomeClass<bool>();
 #pragma warning restore CA1859
-                // ReSharper disable SuggestVarOrType_BuiltInTypes
                 object objectValue = new();
                 const long longValue = 0;
                 const byte byteValue = 0;
@@ -26,11 +25,13 @@ namespace MultiTypeParameterGenerator.Tests.IntegrationTests
                 const string stringValue = "";
                 const int intValue = 0;
                 const bool boolValue = false;
-                // ReSharper restore SuggestVarOrType_BuiltInTypes
                 var someRecord = new SomeClass<bool>.SomeRecord();
                 var someRecord2 = new ISomeClass<bool>.SomeRecord();
-                var someOtherRecord = new SomeOtherClass.SomeOtherRecord();
                 var someMoreRecord = new SomeMoreRecord();
+
+                bool? nullableBoolValue = null;
+                // ReSharper disable once VariableCanBeNotNullable
+                SomeOtherClass.SomeOtherRecord? nullableSomeOtherRecord = new();
 
                 // Act & Assert
                 someClass.SomeMethod(longValue, objectValue, [stringValue])
@@ -123,8 +124,8 @@ namespace MultiTypeParameterGenerator.Tests.IntegrationTests
                 someClass.SomeMethod_WithSomeMoreRecord_AndSomeRecord_2(someMoreRecord, objectValue, [someRecord2])
                     .Should().BeEquivalentTo((testRecord: someMoreRecord, objectValue, new[] { someRecord2 }));
 
-                SomeOtherClass.SomeMethod(boolValue).Should().Be(boolValue);
-                SomeOtherClass.SomeMethod(someOtherRecord).Should().Be(someOtherRecord);
+                SomeOtherClass.SomeMethod(nullableBoolValue).Should().Be(nullableBoolValue);
+                SomeOtherClass.SomeMethod(nullableSomeOtherRecord).Should().Be(nullableSomeOtherRecord);
             }
         }
     }
@@ -168,7 +169,7 @@ namespace MultiTypeParameterGenerator.Tests.IntegrationTests
     public static partial class SomeOtherClass
     {
         [AccessModifier(Internal)]
-        private static T SomeMethod<[AcceptedTypes<bool, SomeOtherRecord>] T>(T value) => value;
+        private static T? SomeMethod<[AcceptedTypes<bool, SomeOtherRecord>] T>(T? value) => value;
 
         public record SomeOtherRecord;
     }

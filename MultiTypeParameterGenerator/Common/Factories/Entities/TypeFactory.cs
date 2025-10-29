@@ -10,13 +10,17 @@ namespace MultiTypeParameterGenerator.Common.Factories.Entities;
 internal sealed class TypeFactory : ITypeFactory
 {
     private INamedTypeSymbol _containingTypeOfMethod = null!;
+    
+    public Type Create(ITypeSymbol type) => Create(type, false);
 
-    public Type Create(ITypeSymbol type) =>
+    private Type Create(ITypeSymbol type, bool isNullable) =>
         type switch
         {
             INamedTypeSymbol namedTypeSymbol => type.IsTupleType
-                ? CreateTupleType(namedTypeSymbol)
-                : CreateNamedType(namedTypeSymbol),
+                ? CreateTupleType(namedTypeSymbol, isNullable)
+                : type is { IsValueType: true, NullableAnnotation: NullableAnnotation.Annotated }
+                    ? Create(namedTypeSymbol.TypeArguments.First(), true)
+                    : CreateNamedType(namedTypeSymbol, isNullable),
             IArrayTypeSymbol arrayTypeSymbol => CreateArrayType(arrayTypeSymbol),
             ITypeParameterSymbol typeParameterSymbol => CreateGenericType(typeParameterSymbol),
             _ => throw new NotSupportedException($"Unsupported type: {type.GetType().Name} ({type})")
@@ -25,13 +29,13 @@ internal sealed class TypeFactory : ITypeFactory
     public void SetContainingTypeOfMethod(INamedTypeSymbol containingTypeOfMethod) =>
         _containingTypeOfMethod = containingTypeOfMethod;
 
-    private TupleType CreateTupleType(INamedTypeSymbol type) =>
+    private TupleType CreateTupleType(INamedTypeSymbol type, bool isNullable) =>
         new(CreateTypeCollection(type.TupleElements.SelectToReadonlyList(te => te.Type)),
-            GetNullableAnnotation(type));
+            isNullable || GetNullableAnnotation(type));
 
-    private NamedType CreateNamedType(INamedTypeSymbol type) =>
+    private NamedType CreateNamedType(INamedTypeSymbol type, bool isNullable = false) =>
         new(GetFullTypeName(type), GetContainingType(type), CreateTypeCollection(type.TypeArguments),
-            GetNullableAnnotation(type));
+            isNullable || GetNullableAnnotation(type));
 
     private ArrayType CreateArrayType(IArrayTypeSymbol type) => new(Create(type.ElementType));
 

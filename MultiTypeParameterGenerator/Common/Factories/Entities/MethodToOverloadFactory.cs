@@ -29,6 +29,9 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
 
         typeFactory.SetContainingTypeOfMethod(containingType);
 
+        var parameters = GetParameters(method);
+        var parameterTypes = parameters.Values.Select(p => p.Type);
+
         return new(useFullTypeNames,
             generateExtensionMethod,
             HasAnyDocumentationComment(method),
@@ -37,8 +40,8 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
             GetReturnType(method),
             GetMethodName(method),
             GetGenericTypes(method),
-            GetAffectedGenericTypes(method, useFullTypeNames),
-            GetParameters(method));
+            GetAcceptedTypesForAffectedGenericTypes(method, parameterTypes, useFullTypeNames),
+            parameters);
     }
 
     private static bool HasAnyDocumentationComment(IMethodSymbol methodSymbol) =>
@@ -123,11 +126,18 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
                 tp.HasUnmanagedTypeConstraint,
                 tp.HasConstructorConstraint))));
 
-    private AcceptedTypesForAffectedGenericTypeCollection GetAffectedGenericTypes(
-        IMethodSymbol method, bool useFullTypeName) =>
+    private AcceptedTypesForAffectedGenericTypeCollection GetAcceptedTypesForAffectedGenericTypes(
+        IMethodSymbol method, IEnumerable<Type> parameterTypes, bool useFullTypeName) =>
         new(method.TypeParameters.Select(typeParameter => new AcceptedTypesForAffectedGenericType(
-                new(new(typeParameter.Name)), GetAcceptedTypes(typeParameter, useFullTypeName)))
+                GetAffectedGenericType(typeParameter, parameterTypes),
+                GetAcceptedTypes(typeParameter, useFullTypeName)))
             .WhereToReadonlyList(affectedGenericType => affectedGenericType.AcceptedTypes.Values.Any()));
+
+    private static GenericType GetAffectedGenericType(
+        ITypeParameterSymbol typeParameter, IEnumerable<Type> parameterTypes) =>
+        new(new(typeParameter.Name),
+            IsNullable: parameterTypes.Any(p =>
+                p.SourceCodeExclNullableAnnotation.Value == typeParameter.Name && p.IsNullable));
 
     private AcceptedTypeCollection GetAcceptedTypes(ITypeParameterSymbol typeParameter, bool useFullTypeName)
     {
@@ -237,7 +247,9 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
         type.ContainingNamespace?.Name == typeof(GenericType).Namespace && type.Name is nameof(GenericType);
 
     private ParameterCollection GetParameters(IMethodSymbol method) => new(
-        method.Parameters.SelectToReadonlyList(p => new Parameter(typeFactory.Create(p.Type), new(p.Name))));
+        method.Parameters.SelectToReadonlyList(p =>
+            new Parameter(typeFactory.Create(p.Type), new(p.Name), p.IsOptional,
+                p.IsOptional ? p.ExplicitDefaultValue : null)));
 
     private static ImmutableArray<ITypeSymbol> GetTypeArguments(ITypeSymbol typeSymbol) =>
         ((INamedTypeSymbol)typeSymbol).TypeArguments;

@@ -23,7 +23,8 @@ internal sealed record GenericTypeCollection(params IReadOnlyList<GenericType> V
         bool useFullTypeNames) =>
         acceptedTypeCombination.Values.Aggregate(this,
             (current, acceptedType) => current.Replace(acceptedType.AffectedGenericType,
-                GenericType.FromAcceptedType(acceptedType.AcceptedType, useFullTypeNames)));
+                GenericType.FromAcceptedType(acceptedType.AcceptedType, acceptedType.AffectedGenericType.IsNullable,
+                    useFullTypeNames)));
 
     private GenericTypeCollection Replace(GenericType valueToReplace, GenericType newValue)
     {
