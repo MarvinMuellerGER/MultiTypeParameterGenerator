@@ -81,6 +81,20 @@ public void Plot<[AcceptedTypes<int, double>] T1, [AcceptedTypes<int, double>] T
 // public void Plot(double x, double y);
 ```
 
+### Optional Parameters
+
+If you assign a default value to a parameter, it will be contained in the generated overloads too:
+``` csharp
+public void Plot<[AcceptedTypes<int, double>] T>(T x = default, int y = 0)
+{
+    // Implementation
+}
+
+// Generates:
+// public void Plot(int x = default, int y = 0);
+// public void Plot(double x = default, int y = 0);
+```
+
 ### XML documentation comments
 
 If you add summary comments they will not get lost:
