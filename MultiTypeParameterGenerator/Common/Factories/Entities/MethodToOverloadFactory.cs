@@ -243,10 +243,8 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
         type.ContainingNamespace?.Name == typeof(AcceptedTypesCollection<,>).Namespace &&
         type.Name is nameof(AcceptedTypesCollection<,>);
 
-    private static bool IsGenericType(ITypeSymbol type)
-    {
-        return type.ContainingNamespace?.Name == typeof(GenericType<>).Namespace && type.Name is nameof(GenericType<>);
-    }
+    private static bool IsGenericType(ITypeSymbol type) =>
+        type.ContainingNamespace?.Name == typeof(GenericType<>).Namespace && type.Name is nameof(GenericType<>);
 
     private ParameterCollection GetParameters(IMethodSymbol method) => new(
         method.Parameters.SelectToReadonlyList(p =>
