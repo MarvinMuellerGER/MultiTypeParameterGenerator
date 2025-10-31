@@ -235,7 +235,7 @@ internal sealed class MethodToOverloadFactory(ITypeFactory typeFactory) : IMetho
 
         return new(
             typeFactory.Create(type),
-            asGenericType && type is { IsReferenceType: true, IsSealed: false },
+            asGenericType && type is { IsReferenceType: true, IsSealed: false } and not IArrayTypeSymbol,
             useFullTypeName);
     }
 
